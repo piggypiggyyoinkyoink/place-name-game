@@ -6,27 +6,38 @@ let projection;
 let enteredPlaces = [];
 let numPlaces = 0;
 let totalPlaces;
+let type;
 window.addEventListener("DOMContentLoaded", async () => {
-    let response = await fetch("/static/uk-counties.geojson");
-    let geoData = await response.json();
-    // Create projection
-    projection = d3.geoConicConformal()
-        .fitSize([width, height], geoData);
+    async function drawMap(){
+        let response;
+        switch(type){
+            case "uk":
+                response = await fetch("/static/geo/uk-counties.geojson");
+                break;
+            default:
+                console.log("Unknown type, defaulting to UK");
+                response = await fetch("/static/geo/uk-counties.geojson");
+        }
+        let geoData = await response.json();
+        // Create projection
+        projection = d3.geoConicConformal()
+            .fitSize([width, height], geoData);
 
-    // Create path generator
-    const path = d3.geoPath()
-        .projection(projection);
+        // Create path generator
+        const path = d3.geoPath()
+            .projection(projection);
 
-    // Draw all features
-    svg.selectAll("path")
-        .data(geoData.features)
-        .enter()
-        .append("path")
-        .attr("d", path)
-        .attr("fill", "#eeeeee")
-        .attr("stroke", "#444")
-        .attr("stroke-width", 0.5);
+        // Draw all features
+        svg.selectAll("path")
+            .data(geoData.features)
+            .enter()
+            .append("path")
+            .attr("d", path)
+            .attr("fill", "#eeeeee")
+            .attr("stroke", "#444")
+            .attr("stroke-width", 0.5);
 
+        }
     function addToMap(place) {
 
         const [x, y] = projection([
@@ -40,6 +51,7 @@ window.addEventListener("DOMContentLoaded", async () => {
             .attr("r", 3)
             .attr("fill", "rgba(255, 0, 0, 0.5)");
     }
+    
 
     function addToTable(name, county){
         const table = document.getElementById("placesTable");
@@ -68,7 +80,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         }
         document.getElementById("message").textContent = "⠀";
         if (placeName.length >= 2) {
-            const response = await fetch(`/query?text=${encodeURIComponent(placeName)}`, { credentials: 'include' });
+            const response = await fetch(`/query?text=${encodeURIComponent(placeName)}&type=${type}`, { credentials: 'include' });
             const places = await response.json();
             console.log(places);
             if (places.results.length > 0) {
@@ -85,9 +97,12 @@ window.addEventListener("DOMContentLoaded", async () => {
         }
     
     });
-
     async function init(){
-        const response = await fetch(`/init`, { credentials: 'include' });
+        const paramsString = window.location.search;
+        const searchParams = new URLSearchParams(paramsString)
+        type = searchParams.get("type")|| "uk";
+        await drawMap();
+        const response = await fetch(`/init?type=${type}`, { credentials: 'include' });
         const data = await response.json();
         for (const place of data.guesses) {
             addPlace(place);
@@ -97,10 +112,11 @@ window.addEventListener("DOMContentLoaded", async () => {
         const totalData = await total.json();
         totalPlaces = totalData.total;
         document.getElementById("placesHeader").textContent = `Places Entered: ${numPlaces} / ${totalPlaces}`;
-
         console.log(data);
     }
     init();
+
+    
 
 
 

@@ -26,19 +26,21 @@ app.mount("/static", StaticFiles(directory="client"), name="static")
 
 
 @app.get("/init")
-def init(uid: Annotated[str | None, Cookie()] = None):
-
+def init(uid: Annotated[str | None, Cookie()] = None, type: str | None = None):
+    print("UID:", uid)
+    print("Type:", type)
     if uid is not None:
         try:
             with open(f"gamedata/{uid}.json", "r") as f:
                 content = json.load(f)
-                if content.get("finished", False):
+                if content.get("finished") == False and content.get("type") == type:
                     response = JSONResponse(content=content)
                     return response
-        except FileNotFoundError:pass
+        except FileNotFoundError:
+            print("File not found")
     
     uid = str(uuid.uuid4())
-    init_content = {"uid": uid, "guesses":[], "count": 0, "name": "Anonymous", "date": "Unknown", "finished": False}
+    init_content = {"uid": uid, "guesses":[], "count": 0, "name": "Anonymous", "date": "Unknown", "finished": False, "type": type}
     with open(f"gamedata/{uid}.json", "w") as f:
         json.dump(init_content, f)
     response = JSONResponse(content=init_content)
@@ -47,11 +49,14 @@ def init(uid: Annotated[str | None, Cookie()] = None):
 
 
 @app.get("/query")
-def query(text: str, uid: Annotated[str | None, Cookie()] = None):
+def query(text: str, type: str, uid: Annotated[str | None, Cookie()] = None):
+    with open("typemap.json", "r") as f:
+        typemap = json.load(f)
+    valid_counties = typemap.get(type, [])
     con = sqlite3.connect("data.db")
     cur = con.cursor()
     text = text.replace(" ", "").replace("-", "").replace("'", "").replace(".", "").lower()
-    cur.execute(f"SELECT name, lat, lon, county FROM data WHERE name_norm LIKE '%//{text}//%'")
+    cur.execute(f"SELECT name, lat, lon, county FROM data WHERE name_norm LIKE '%//{text}//%' AND county IN {tuple(valid_counties)}")
 
     results = cur.fetchall()
     con.close()
