@@ -22,11 +22,25 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="client"), name="static")
 
 @app.get("/query")
-async def query(text: str):
+def query(text: str):
     con = sqlite3.connect("data.db")
     cur = con.cursor()
     text = text.replace(" ", "").replace("-", "").replace("'", "").replace(".", "").lower()
     cur.execute(f"SELECT name, lat, lon FROM data WHERE name_norm LIKE '%//{text}//%'")
+
+    results = cur.fetchall()
+    con.close()
+    response = {"results": []}
+    for result in results:
+        res_json = {"name": result[0], "lat": result[1], "lon": result[2]}
+        response["results"].append(res_json)
+    return response
+
+@app.get("/all")
+def all():
+    con = sqlite3.connect("data.db")
+    cur = con.cursor()
+    cur.execute(f"SELECT name, lat, lon FROM data")
 
     results = cur.fetchall()
     con.close()
