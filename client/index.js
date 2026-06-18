@@ -48,7 +48,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         const cell1 = row.insertCell(1);
         cell1.textContent = name;
         const tableContainer = document.getElementById("tableContainer");
-        if (tableContainer.offsetHeight >= parseInt(window.getComputedStyle(tableContainer).maxHeight)) {
+        if (tableContainer.style.overflowY != "scroll" && tableContainer.offsetHeight >= parseInt(window.getComputedStyle(tableContainer).maxHeight)) {
             tableContainer.style.overflowY = "scroll";
         }
     }
@@ -61,8 +61,14 @@ window.addEventListener("DOMContentLoaded", async () => {
         if (event.key !== "Enter") return;
         // console.log("hello");
         const placeName = event.target.value;
+        if (enteredPlaces.includes(placeName.toLowerCase().trim().replaceAll(" ",""))) {
+            event.target.value = "";
+            document.getElementById("message").textContent = "Place already entered!";
+            return;
+        }
+        document.getElementById("message").textContent = "⠀";
         if (placeName.length >= 2) {
-            const response = await fetch(`http://127.0.0.1:8000/query?text=${encodeURIComponent(placeName)}`);
+            const response = await fetch(`/query?text=${encodeURIComponent(placeName)}`, { credentials: 'include' });
             const places = await response.json();
             // console.log(places.results);
             if (places.results.length > 0) {
@@ -76,19 +82,27 @@ window.addEventListener("DOMContentLoaded", async () => {
         }
     
     });
-    async function addAllPlaces(a,b){
-        const response = await fetch(`http://127.0.0.1:8000/all`);
-        let places = await response.json();
-        for (const place of places.results.slice(a,b)) {
+
+    async function init(){
+        const response = await fetch(`/init`, { credentials: 'include' });
+        const data = await response.json();
+        for (const place of data.guesses) {
             addPlace(place);
         }
+        console.log(data);
     }
-    // for (let i = 0; i < 10; i++) {
-    //     setTimeout(() => {
-    //     addAllPlaces(1000*i, 1000*(i+1));
-    //     }, 10000);
+    init();
+
+
+
+    // async function addAllPlaces(a,b){
+    //     const response = await fetch(`http://127.0.0.1:8000/all`);
+    //     let places = await response.json();
+    //     for (const place of places.results.slice(a,b)) {
+    //         addPlace(place);
+    //     }
     // }
-    
+    // addAllPlaces(0, 36000);
 
 
 });
