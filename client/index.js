@@ -6,7 +6,7 @@ let projection;
 let enteredPlaces = [];
 let numPlaces = 0;
 window.addEventListener("DOMContentLoaded", async () => {
-    let response = await fetch("/static/gb.json");
+    let response = await fetch("/static/uk-counties.geojson");
     let geoData = await response.json();
     // Create projection
     projection = d3.geoConicConformal()
@@ -40,13 +40,13 @@ window.addEventListener("DOMContentLoaded", async () => {
             .attr("fill", "rgba(255, 0, 0, 0.5)");
     }
 
-    function addToTable(name){
+    function addToTable(name, county){
         const table = document.getElementById("placesTable");
         const row = table.insertRow(0);
         const cell0 = row.insertCell(0);
         cell0.textContent = numPlaces;
         const cell1 = row.insertCell(1);
-        cell1.textContent = name;
+        cell1.textContent = name + ", " + county;
         const tableContainer = document.getElementById("tableContainer");
         if (tableContainer.style.overflowY != "scroll" && tableContainer.offsetHeight >= parseInt(window.getComputedStyle(tableContainer).maxHeight)) {
             tableContainer.style.overflowY = "scroll";
@@ -55,7 +55,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     function addPlace(place){
         addToMap({ latitude: place.lat, longitude: place.lon });
         numPlaces++;
-        addToTable(place.name);
+        addToTable(place.name, place.county);
     }
     document.getElementById("placeInput").addEventListener("keypress", async (event) => {
         if (event.key !== "Enter") return;

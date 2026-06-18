@@ -50,7 +50,7 @@ def query(text: str, uid: Annotated[str | None, Cookie()] = None):
     con = sqlite3.connect("data.db")
     cur = con.cursor()
     text = text.replace(" ", "").replace("-", "").replace("'", "").replace(".", "").lower()
-    cur.execute(f"SELECT name, lat, lon FROM data WHERE name_norm LIKE '%//{text}//%'")
+    cur.execute(f"SELECT name, lat, lon, county FROM data WHERE name_norm LIKE '%//{text}//%'")
 
     results = cur.fetchall()
     con.close()
@@ -58,7 +58,7 @@ def query(text: str, uid: Annotated[str | None, Cookie()] = None):
     with open(f"gamedata/{uid}.json", "r") as f:
         content = json.load(f)
     for result in results:
-        res_json = {"name": result[0], "lat": result[1], "lon": result[2]}
+        res_json = {"name": result[0], "lat": result[1], "lon": result[2], "county": result[3]}
         if res_json not in content["guesses"]:
             content["guesses"].append(res_json)
             response["results"].append(res_json)
@@ -70,12 +70,12 @@ def query(text: str, uid: Annotated[str | None, Cookie()] = None):
 def all():
     con = sqlite3.connect("data.db")
     cur = con.cursor()
-    cur.execute(f"SELECT name, lat, lon FROM data")
+    cur.execute(f"SELECT name, lat, lon, county FROM data")
 
     results = cur.fetchall()
     con.close()
     response = {"results": []}
     for result in results:
-        res_json = {"name": result[0], "lat": result[1], "lon": result[2]}
+        res_json = {"name": result[0], "lat": result[1], "lon": result[2], "county": result[3]}
         response["results"].append(res_json)
     return response

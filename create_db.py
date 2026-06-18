@@ -1,4 +1,5 @@
 import json, sqlite3
+from get_county import get_county_from_coordinates
 
 file = open("export.geojson", "r", encoding="utf-8")
 data = json.load(file)
@@ -32,6 +33,7 @@ for feature in features:
         coordinates = geometry.get("coordinates", None)
         if coordinates:
             lon, lat = coordinates
-            cur.execute("INSERT INTO data (lat, lon, name, name_norm, type) VALUES (?, ?, ?, ?, ?)", (lat, lon, name, name_norm, typ))
+            county = get_county_from_coordinates(lat, lon)
+            cur.execute("INSERT INTO data (lat, lon, name, name_norm, type, county) VALUES (?, ?, ?, ?, ?, ?)", (lat, lon, name, name_norm, typ, county))
             con.commit()
 con.close()
