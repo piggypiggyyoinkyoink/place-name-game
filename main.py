@@ -6,6 +6,10 @@ from typing import Annotated
 import sqlite3
 import uuid
 import json
+import os
+
+if not os.path.exists("gamedata"):
+    os.makedirs("gamedata")
 
 app = FastAPI()
 
@@ -58,6 +62,8 @@ def query(text: str, type: str, uid_json: Annotated[str | None, Cookie()] = None
     with open("typemap.json", "r") as f:
         typemap = json.load(f)
     valid_counties = typemap.get(type, [])
+    if len(valid_counties) == 1:
+        valid_counties.append("Penis") # fucking sqlite hates single elements in IN statements so need to add garbage
     con = sqlite3.connect("data.db")
     cur = con.cursor()
     text = text.replace(" ", "").replace("-", "").replace("'", "").replace(".", "").lower()
@@ -85,10 +91,16 @@ def query(text: str, type: str, uid_json: Annotated[str | None, Cookie()] = None
     return response
 
 @app.get("/howmany")
-def get_total():
+def get_total(type : str):
+    with open("typemap.json", "r") as f:
+        typemap = json.load(f)
+    valid_counties = typemap.get(type, [])
+    print("Valid counties:", valid_counties)
+    if len(valid_counties) == 1:
+        valid_counties.append("Penis") # fucking sqlite hates single elements in IN statements so need to add garbage
     con = sqlite3.connect("data.db")
     cur = con.cursor()
-    total = cur.execute("SELECT COUNT(*) FROM data").fetchone()[0]
+    total = cur.execute(f"SELECT COUNT(*) FROM data WHERE county IN {tuple(valid_counties)}").fetchone()[0]
     con.close()
     return {"total": total}
 

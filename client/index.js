@@ -14,6 +14,9 @@ window.addEventListener("DOMContentLoaded", async () => {
             case "uk":
                 response = await fetch("/static/geo/uk-counties.geojson");
                 break;
+            case "lincolnshire":
+                response = await fetch("/static/geo/lincolnshire.geojson");
+                break;
             default:
                 console.log("Unknown type, defaulting to UK");
                 response = await fetch("/static/geo/uk-counties.geojson");
@@ -108,7 +111,7 @@ window.addEventListener("DOMContentLoaded", async () => {
             addPlace(place);
             enteredPlaces.push(place.name.toLowerCase().trim().replaceAll(" ",""));
         }
-        const total = await fetch("/howmany");
+        const total = await fetch("/howmany?type=" + type);
         const totalData = await total.json();
         totalPlaces = totalData.total;
         document.getElementById("placesHeader").textContent = `Places Entered: ${numPlaces} / ${totalPlaces}`;
