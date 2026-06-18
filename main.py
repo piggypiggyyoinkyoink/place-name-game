@@ -26,7 +26,10 @@ app.mount("/static", StaticFiles(directory="client"), name="static")
 
 
 @app.get("/init")
-def init(uid: Annotated[str | None, Cookie()] = None, type: str | None = None):
+def init(uid_json: Annotated[str | None, Cookie()] = None, type: str | None = "uk"):
+    cookie = json.loads(uid_json) if uid_json else {}
+    uid = cookie.get(f"uid-{type}") if cookie else None
+    print(cookie)
     print("UID:", uid)
     print("Type:", type)
     if uid is not None:
@@ -44,12 +47,14 @@ def init(uid: Annotated[str | None, Cookie()] = None, type: str | None = None):
     with open(f"gamedata/{uid}.json", "w") as f:
         json.dump(init_content, f)
     response = JSONResponse(content=init_content)
-    response.set_cookie(key="uid", value=uid, httponly=False, samesite="lax", secure=False)
+    cookie[f"uid-{type}"] = uid
+    cookie_str = json.dumps(cookie)
+    response.set_cookie(key="uid_json", value=cookie_str, httponly=False, samesite="lax", secure=False)
     return response
 
 
 @app.get("/query")
-def query(text: str, type: str, uid: Annotated[str | None, Cookie()] = None):
+def query(text: str, type: str, uid_json: Annotated[str | None, Cookie()] = None):
     with open("typemap.json", "r") as f:
         typemap = json.load(f)
     valid_counties = typemap.get(type, [])
@@ -61,6 +66,10 @@ def query(text: str, type: str, uid: Annotated[str | None, Cookie()] = None):
     results = cur.fetchall()
     con.close()
     response = {"results": [], "already_guessed": False}
+    if uid_json is None:
+        return JSONResponse(content={"error": "No UID cookie"}, status_code=400)
+    cookie = json.loads(uid_json)
+    uid = cookie.get(f"uid-{type}")
     with open(f"gamedata/{uid}.json", "r") as f:
         content = json.load(f)
     for result in results:
