@@ -27,17 +27,18 @@ app.mount("/static", StaticFiles(directory="client"), name="static")
 
 @app.get("/init")
 def init(uid: Annotated[str | None, Cookie()] = None):
-    
+
     if uid is not None:
         try:
             with open(f"gamedata/{uid}.json", "r") as f:
                 content = json.load(f)
-                response = JSONResponse(content=content)
-                return response
+                if content.get("finished", False):
+                    response = JSONResponse(content=content)
+                    return response
         except FileNotFoundError:pass
     
     uid = str(uuid.uuid4())
-    init_content = {"uid": uid, "guesses":[]}
+    init_content = {"uid": uid, "guesses":[], "count": 0, "name": "Anonymous", "date": "Unknown", "finished": False}
     with open(f"gamedata/{uid}.json", "w") as f:
         json.dump(init_content, f)
     response = JSONResponse(content=init_content)
@@ -54,17 +55,38 @@ def query(text: str, uid: Annotated[str | None, Cookie()] = None):
 
     results = cur.fetchall()
     con.close()
-    response = {"results": []}
+    response = {"results": [], "already_guessed": False}
     with open(f"gamedata/{uid}.json", "r") as f:
         content = json.load(f)
     for result in results:
         res_json = {"name": result[0], "lat": result[1], "lon": result[2], "county": result[3]}
         if res_json not in content["guesses"]:
             content["guesses"].append(res_json)
+            content["count"] += 1
             response["results"].append(res_json)
+        else:
+            response["already_guessed"] = True
     with open(f"gamedata/{uid}.json", "w") as f:
         json.dump(content, f)
     return response
+
+@app.get("/howmany")
+def get_total():
+    con = sqlite3.connect("data.db")
+    cur = con.cursor()
+    total = cur.execute("SELECT COUNT(*) FROM data").fetchone()[0]
+    con.close()
+    return {"total": total}
+
+@app.get("/data/{uid}")
+def get_data(uid: str):
+    try:
+        with open(f"gamedata/{uid}.json", "r") as f:
+            content = json.load(f)
+            response = JSONResponse(content=content)
+            return response
+    except:
+        return JSONResponse(content={"error": "Data not found"}, status_code=404)
 
 @app.get("/all")
 def all():

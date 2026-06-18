@@ -16,10 +16,6 @@
             <svg id="map" width="600" height="750"></svg>
         </div>
         <div class = "col-lg-4 c" id="r">
-            <input type="text" class = "form-control" id="placeInput" placeholder="Enter a place name">
-            <br>
-            <p id="message">⠀</p>
-            <br>
             <h3 id = "placesHeader">Places Entered</h3>
             <table class = "table table-striped" id = "placesTableHeader">
                 <thead>
@@ -29,7 +25,7 @@
                     </tr>
                 </thead>
             </table>
-            <div id = "tableContainer">
+            <div id = "tableContainer" style="max-height: 630px;">
                 <table class = "table table-striped" id = "placesTable">
                     <thead>
                         <tr>
@@ -44,6 +40,6 @@
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-    <script src="index.js"></script>
+    <script src="display.js"></script>
 </body>
 </html>

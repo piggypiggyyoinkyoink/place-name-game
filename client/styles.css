@@ -5,9 +5,9 @@
     font-size: 1.5rem;
 }
 
-#map{
+/* #map{
     transform:translateX(-15%); 
-}
+} */
 
 .c{
     margin-left: auto;  
@@ -17,6 +17,7 @@
 #tableContainer{
     max-width: 500px;
     max-height:500px;
+    margin:auto;
     /* overflow-y:scroll; */
 }
 /* #tableContainer::-webkit-scrollbar {
@@ -28,4 +29,11 @@
 
 #placesTableHeader{
     max-width: 500px;
+}
+table{
+    margin: auto;
+}
+
+h3, p{
+    text-align: center;
 }

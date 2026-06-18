@@ -58,36 +58,12 @@ window.addEventListener("DOMContentLoaded", async () => {
         numPlaces++;
         addToTable(place.name, place.county);
     }
-    document.getElementById("placeInput").addEventListener("keypress", async (event) => {
-        if (event.key !== "Enter") return;
-        // console.log("hello");
-        const placeName = event.target.value;
-        if (enteredPlaces.includes(placeName.toLowerCase().trim().replaceAll(" ",""))) {
-            document.getElementById("message").textContent = "Place already entered!";
-            return;
-        }
-        document.getElementById("message").textContent = "⠀";
-        if (placeName.length >= 2) {
-            const response = await fetch(`/query?text=${encodeURIComponent(placeName)}`, { credentials: 'include' });
-            const places = await response.json();
-            console.log(places);
-            if (places.results.length > 0) {
-                // console.log("beep");
-                for (const place of places.results) {
-                    addPlace(place);
-                    document.getElementById("placesHeader").textContent = `Places Entered: ${numPlaces} / ${totalPlaces}`;
-                }
-                enteredPlaces.push(event.target.value.toLowerCase().trim().replaceAll(" ",""));
-                event.target.value = "";
-            } else if (places.already_guessed) {
-                document.getElementById("message").textContent = "Place already entered!";
-            }
-        }
-    
-    });
 
     async function init(){
-        const response = await fetch(`/init`, { credentials: 'include' });
+        const paramsString = window.location.search;
+        const searchParams = new URLSearchParams(paramsString)
+        const uid = searchParams.get("uid");
+        const response = await fetch(`/data/${uid}`);
         const data = await response.json();
         for (const place of data.guesses) {
             addPlace(place);
@@ -104,14 +80,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 
 
-    // async function addAllPlaces(a,b){
-    //     const response = await fetch(`http://127.0.0.1:8000/all`);
-    //     let places = await response.json();
-    //     for (const place of places.results.slice(a,b)) {
-    //         addPlace(place);
-    //     }
-    // }
-    // addAllPlaces(0, 36000);
 
 
 });
