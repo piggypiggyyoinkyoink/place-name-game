@@ -47,27 +47,30 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     async function createCard(type, data, category){
         const card = document.createElement("div");
-        card.setAttribute("style", "width: 18rem; margin: 10px;");
-        card.setAttribute("class", "crd col xs-12 col-sm-6 col-md-4 col-lg-3");
+        // card.setAttribute("style", " margin: 10px;");
+        card.setAttribute("class", "crd col-11 col-sm-6 col-md-4 col-lg-3");
         card.setAttribute("id", `card-${type}`);
+        const cardInner = document.createElement("div");
+        cardInner.setAttribute("class", "card-body");
+        card.appendChild(cardInner);
         const mapContainer = document.createElement("div");
         mapContainer.setAttribute("id", `map-container-${type}`);
         mapContainer.setAttribute("style", "width: 100%;");
-        card.appendChild(mapContainer);
-        card.appendChild(document.createElement("hr"));
+        cardInner.appendChild(mapContainer);
+        cardInner.appendChild(document.createElement("hr"));
         const cardTitle = document.createElement("h5");
         cardTitle.setAttribute("class", "card-title");
         if (data.name.startsWith("the")) {
             data.name = data.name.slice(4); // Remove "the " from the beginning of the name
         }
         cardTitle.textContent = data.name;
-        card.appendChild(cardTitle);
+        cardInner.appendChild(cardTitle);
         document.getElementById(`${category}-card-container`).appendChild(card);
-        const containerElem = document.getElementById(`map-container-${type}`);
-        let width = window.getComputedStyle(containerElem).width;
-        let height = window.getComputedStyle(containerElem).height;
-        width = parseInt(width);
-        await drawMap(width, type);
+        // const containerElem = document.getElementById(`map-container-${type}`);
+        // let width = window.getComputedStyle(containerElem).width;
+        // let height = window.getComputedStyle(containerElem).height;
+        // width = parseInt(width);
+        // await drawMap(width, type);
         document.getElementById(`card-${type}`).addEventListener("click", () => {
             window.location.href = `/static/index.html?type=${type}`;
         });
@@ -101,6 +104,12 @@ window.addEventListener("DOMContentLoaded", async () => {
         for (const type of niCountyTypes){
             const data = typemap[type];
             await createCard(type, data, "ni");
+        }
+        for (const type of alltypes){
+            const containerElem = document.getElementById(`map-container-${type}`);
+            let width = window.getComputedStyle(containerElem).width;
+            width = parseInt(width);
+            await drawMap(width, type);
         }
         window.addEventListener("resize", () => {
             clearTimeout(resizeTimer);

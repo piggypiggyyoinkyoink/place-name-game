@@ -58,7 +58,7 @@ div.top{
     text-align: center;
 }
 
-.crd{
+.card-body{
     border: 2px solid #000000;
     border-radius: 20px;
     background-color: #f8f9fa;
@@ -66,7 +66,7 @@ div.top{
 
 
 
-.crd:hover {
+.card-body:hover {
     cursor: pointer;
     background-color: #e9ecef;
     animation-name: wiggle;
@@ -85,3 +85,4 @@ div.top{
   80% {transform: rotate(-2.5deg) scale(1.05);}
   100% {transform: rotate(0deg) scale(1.05);}
 }
+

@@ -9,7 +9,7 @@
 <body>
     <div class = "top">
         <h1 id = "h1">Loading...</h1>
-        <p id = "instructions">No cheating please!</p>
+        <p id = "instructions"><a href = "home.html">Back to Home</a></p>
         <hr>
     </div>
     <div class = "container">
@@ -45,9 +45,13 @@
                 </div>
                 <br>
                 <div class = "btncontainer">
-                    <input type="text" class = "form-control" id="nameInput" placeholder="Enter your name..." style = "display:inline-block;">
-                    <button type="button" class="btn btn-success" id="finishButton">Finish and Save</button>
-                    <button type="button" class="btn btn-danger" id="resetButton">Reset</button>
+                    <div class = "inputcontainer" style="display:inline-block; padding-bottom:5px;">
+                        <input type="text" class = "form-control" id="nameInput" placeholder="Enter your name...">
+                    </div>
+                    <div class = "buttonscontainer" style="display:inline-block; transform: translateY(-2px);">
+                        <button type="button" class="btn btn-success" id="finishButton">Finish and Save</button>
+                        <button type="button" class="btn btn-danger" id="resetButton">Reset</button>
+                    </div>
                 </div>
 
             </div>
