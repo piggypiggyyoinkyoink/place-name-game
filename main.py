@@ -7,6 +7,7 @@ import sqlite3
 import uuid
 import json
 import os
+import datetime
 
 if not os.path.exists("gamedata"):
     os.makedirs("gamedata")
@@ -36,6 +37,10 @@ def init(uid_json: Annotated[str | None, Cookie()] = None, type: str | None = "u
     print(cookie)
     print("UID:", uid)
     print("Type:", type)
+    with open("typemap.json", "r") as f:
+        typemap = json.load(f)
+    if type not in typemap:
+        return JSONResponse(content={"error": "Invalid type"}, status_code=400)
     if uid is not None:
         try:
             with open(f"gamedata/{uid}.json", "r") as f:
@@ -62,6 +67,8 @@ def query(text: str, type: str, uid_json: Annotated[str | None, Cookie()] = None
     with open("typemap.json", "r") as f:
         typemap = json.load(f)
     typedata = typemap.get(type, [])
+    if not typedata:
+        return JSONResponse(content={"error": "Invalid type"}, status_code=400)
     valid_counties = typedata.get("valid-counties", [])
     if len(valid_counties) == 1:
         valid_counties.append("Penis") # fucking sqlite hates single elements in IN statements so need to add garbage
@@ -96,6 +103,8 @@ def get_total(type : str):
     with open("typemap.json", "r") as f:
         typemap = json.load(f)
     typedata = typemap.get(type, [])
+    if not typedata:
+        return JSONResponse(content={"error": "Invalid type"}, status_code=400)
     valid_counties = typedata.get("valid-counties", [])
     print("Valid counties:", valid_counties)
     if len(valid_counties) == 1:
@@ -105,6 +114,84 @@ def get_total(type : str):
     total = cur.execute(f"SELECT COUNT(*) FROM data WHERE county IN {tuple(valid_counties)}").fetchone()[0]
     con.close()
     return {"total": total}
+
+@app.get("/setname")
+def set_name(type: str, uid_json: Annotated[str | None, Cookie()] = None, name: str | None = "Anonymous"):
+    if uid_json is None:
+        return JSONResponse(content={"error": "No UID cookie"}, status_code=400)
+    cookie = json.loads(uid_json)
+    uid = cookie.get(f"uid-{type}")
+    with open(f"gamedata/{uid}.json", "r") as f:
+        content = json.load(f)
+    content["name"] = name
+    with open(f"gamedata/{uid}.json", "w") as f:
+        json.dump(content, f)
+    return JSONResponse(content={"message": "Name updated successfully", "name": name})
+
+@app.get("/finish")
+def finish(type: str,uid_json: Annotated[str | None, Cookie()] = None, name: str | None = "Anonymous"):
+    if uid_json is None:
+        return JSONResponse(content={"error": "No UID cookie"}, status_code=400)
+    with open("typemap.json", "r") as f:
+        typemap = json.load(f)
+    typedata = typemap.get(type, [])
+    if not typedata:
+        return JSONResponse(content={"error": "Invalid type"}, status_code=400)
+    cookie = json.loads(uid_json)
+    uid = cookie.get(f"uid-{type}")
+    date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(f"gamedata/{uid}.json", "r") as f:
+        content = json.load(f)
+    content["finished"] = True
+    content["name"] = name
+    content["date"] = date
+    high_scores = typedata.get("high-scores", [])
+    if len(high_scores) < 10 or content["count"] > min(score["count"] for score in high_scores):
+        high_scores.append({"uid": uid, "name": name, "count": content["count"], "date": date})
+        high_scores.sort(key=lambda x: x["count"], reverse=True)
+        high_scores = high_scores[:10]
+        typedata["high-scores"] = high_scores
+        typemap[type] = typedata
+        with open("typemap.json", "w") as f:
+            json.dump(typemap, f, indent=2)
+    with open(f"gamedata/{uid}.json", "w") as f:
+        json.dump(content, f)
+    cookie.pop(f"uid-{type}", None)
+    cookie_str = json.dumps(cookie)
+    response = JSONResponse(content=content)
+    response.set_cookie(key="uid_json", value=cookie_str, httponly=False, samesite="lax", secure=False, max_age=99999999999)
+    return response
+
+@app.get("/reset")
+def reset(type: str, uid_json: Annotated[str | None, Cookie()] = None):
+    if uid_json is None:
+        return JSONResponse(content={"error": "No UID cookie"}, status_code=400)
+    cookie = json.loads(uid_json)
+    uid = cookie.get(f"uid-{type}")
+    with open(f"gamedata/{uid}.json", "r") as f:
+        content = json.load(f)
+    content["guesses"] = []
+    content["count"] = 0
+    content["finished"] = False
+    with open(f"gamedata/{uid}.json", "w") as f:
+        json.dump(content, f)
+    response = JSONResponse(content=content)
+    return response
+
+@app.get("/check-game-exists")
+def check_game_exists(type: str, uid_json: Annotated[str | None, Cookie()] = None):
+    if uid_json is None:
+        return JSONResponse(content={"error": "No UID cookie"}, status_code=400)
+    cookie = json.loads(uid_json)
+    uid = cookie.get(f"uid-{type}")
+    try:
+        with open(f"gamedata/{uid}.json", "r") as f:
+            content = json.load(f)
+            if content.get("finished") == False and content.get("type") == type:
+                return JSONResponse(content={"exists": True})
+    except FileNotFoundError:
+        pass
+    return JSONResponse(content={"exists": False})
 
 @app.get("/data/{uid}")
 def get_data(uid: str):
@@ -122,16 +209,16 @@ def get_typemap():
         typemap = json.load(f)
     return typemap
 
-@app.get("/all")
-def all():
-    con = sqlite3.connect("data.db")
-    cur = con.cursor()
-    cur.execute(f"SELECT name, lat, lon, county FROM data")
+# @app.get("/all")
+# def all():
+#     con = sqlite3.connect("data.db")
+#     cur = con.cursor()
+#     cur.execute(f"SELECT name, lat, lon, county FROM data")
 
-    results = cur.fetchall()
-    con.close()
-    response = {"results": []}
-    for result in results:
-        res_json = {"name": result[0], "lat": result[1], "lon": result[2], "county": result[3]}
-        response["results"].append(res_json)
-    return response
+#     results = cur.fetchall()
+#     con.close()
+#     response = {"results": []}
+#     for result in results:
+#         res_json = {"name": result[0], "lat": result[1], "lon": result[2], "county": result[3]}
+#         response["results"].append(res_json)
+#     return response
