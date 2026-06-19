@@ -65,6 +65,14 @@ window.addEventListener("DOMContentLoaded", async () => {
         }
         cardTitle.textContent = data.name;
         cardInner.appendChild(cardTitle);
+        const res = await fetch(`/howmany?type=${type}`);
+        const howmany = await res.json();
+        const total = howmany.total;
+        const cardText = document.createElement("p");
+        cardText.setAttribute("class", "card-text");
+        cardText.textContent = `${total} places`;
+        cardInner.appendChild(cardText);
+        // console.log(howmany);
         document.getElementById(`${category}-card-container`).appendChild(card);
         // const containerElem = document.getElementById(`map-container-${type}`);
         // let width = window.getComputedStyle(containerElem).width;
@@ -83,7 +91,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         const countryTypes = ["uk", "england", "scotland", "wales", "ni"];
         const englandCountyTypes = ['greaterlondon', 'suffolk', 'essex', 'wiltshire', 'eastsussex', 'staffordshire', 'cambridgeshire', 'somerset', 'cheshire', 'lincolnshire', 'surrey', 'hampshire', 'westsussex', 'hertfordshire', 'westyorkshire', 'westmidlands', 'norfolk', 'cumbria', 'isleofwight', 'cornwall', 'devon', 'oxfordshire', 'berkshire', 'buckinghamshire', 'gloucestershire', 'bedfordshire', 'dorset', 'leicestershire', 'warwickshire', 'northamptonshire', 'worcestershire', 'northumberland', 'kent', 'northyorkshire', 'eastridingofyorkshire', 'tyneandwear', 'herefordshire', 'southyorkshire', 'rutland', 'derbyshire', 'durham', 'shropshire', 'merseyside', 'lancashire', 'nottinghamshire', 'greatermanchester'].sort();
         const scotlandCountyTypes = ['southlanarkshire', 'highland', 'midlothian', 'eastlothian', 'northlanarkshire', 'angus', 'fife', 'moray', 'scottishborders', 'westdunbartonshire', 'renfrewshire', 'northayrshire', 'argyllandbute', 'clackmannanshire', 'westlothian', 'falkirk', 'eastayrshire', 'inverclyde', 'westernisles', 'orkney', 'shetlandislands', 'stirling', 'perthandkinross', 'aberdeenshire', 'cityofedinburgh', 'eastdunbartonshire', 'southayrshire', 'dumfriesandgalloway', 'eastrenfrewshire'].sort();
-        const walesCountyTypes = ['pembrokeshire', 'monmouthshire', 'ceredigion', 'gwynedd', 'swansea', 'torfaen', 'blaenaugwent', 'caerphilly', 'rhonddacynontaf', 'valeofglamorgan', 'bridgend', 'neathporttalbot', 'powys', 'denbighshire', 'conwy', 'cardiff', 'anglesey', 'merthyrtydfil', 'carmarthenshire', 'flintshire', 'wrexham', 'newport'].sort();
+        const walesCountyTypes = ['pembrokeshire', 'monmouthshire', 'ceredigion', 'gwynedd', 'swansea', 'torfaen', 'blaenaugwent', 'caerphilly', 'rhonddacynontaf', 'valeofglamorgan', 'bridgend', 'neathporttalbot', 'powys', 'denbighshire', 'conwy', 'anglesey', 'merthyrtydfil', 'carmarthenshire', 'flintshire', 'wrexham', 'newport'].sort();
         const niCountyTypes = ['fermanagh', 'down', 'antrim', 'londonderry', 'tyrone', 'armagh'].sort()
         for (const type of countryTypes){
             const data = typemap[type];

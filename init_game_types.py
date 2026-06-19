@@ -34,7 +34,7 @@ for feature in data["features"]:
         scotland_geodata["features"].append(feature)
     if county in NI_COUNTIES:
         ni_geodata["features"].append(feature)
-    if county in ["Bristol", "Glasgow City", "Dundee City", "Aberdeen City"]:
+    if county in ["Bristol", "Glasgow City", "Dundee City", "Aberdeen City", "Cardiff"]:
         continue # remove city counties as they are irrelevant
     name = county.replace(" ", "").replace("-", "").replace("'", "").replace(".", "").replace("(", "").replace(")", "").replace(",", "").lower()
     with open(f"{OUT_DIR}/{name}.geojson", "w", encoding="utf-8") as outfile:
