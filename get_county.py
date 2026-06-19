@@ -7,7 +7,7 @@ from functools import lru_cache
 from pathlib import Path
 
 # https://github.com/evansd/uk-ceremonial-counties/blob/master/uk-ceremonial-counties.geojson
-_GEOJSON_PATH = Path(__file__).resolve().parent / "client" / "uk-counties.geojson"
+_GEOJSON_PATH = Path(__file__).resolve().parent / "uk-counties.geojson"
 
 
 def _point_on_segment(lon: float, lat: float, start: list[float], end: list[float]) -> bool:

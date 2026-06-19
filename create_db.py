@@ -1,7 +1,7 @@
 import json, sqlite3
 from get_county import get_county_from_coordinates
 
-file = open("export.geojson", "r", encoding="utf-8")
+file = open("placenames.geojson", "r", encoding="utf-8")
 data = json.load(file)
 features = data["features"]
 print(len(features))

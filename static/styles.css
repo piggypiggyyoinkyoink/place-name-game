@@ -1,0 +1,49 @@
+#placeInput{
+    width:75%;
+    max-width: 400px;
+    margin: auto;
+    font-size: 1.5rem;
+}
+
+/* #map{
+    transform:translateX(-15%); 
+} */
+
+.c{
+    margin-left: auto;  
+    margin-right: auto;
+}
+
+#tableContainer{
+    max-width: 500px;
+    max-height:500px;
+    margin:auto;
+    /* overflow-y:scroll; */
+}
+/* #tableContainer::-webkit-scrollbar {
+    display:none;
+}
+#tableContainer{
+    scrollbar-width: none;
+} */
+
+#placesTableHeader{
+    max-width: 500px;
+}
+table{
+    margin: auto;
+}
+
+h3, p{
+    text-align: center;
+}
+h1, p#instructions{
+    text-align: center;
+}
+div.top{
+    margin-bottom:15px;
+}
+
+.c{
+    margin-bottom: 15px;
+}

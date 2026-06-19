@@ -1,8 +1,993 @@
 {
-    "uk": ["Greater London","Suffolk","Essex","Wiltshire","East Sussex","Staffordshire","Cambridgeshire", "Somerset", "Pembrokeshire", "Cheshire", "Lincolnshire", "Surrey", "Hampshire", "West Sussex", "Hertfordshire", "West Yorkshire", "West Midlands", "Norfolk", "Cumbria", "Isle of Wight", "Cornwall", "Devon", "Oxfordshire", "Berkshire", "Buckinghamshire", "Gloucestershire", "Bedfordshire", "Monmouthshire", "Ceredigion", "Dorset", "Leicestershire", "South Lanarkshire", "Highland", "Warwickshire", "Northamptonshire", "Glasgow City", "Worcestershire", "Northumberland", "Kent", "North Yorkshire", "East Riding of Yorkshire", "Tyne and Wear", "Herefordshire", "Midlothian", "East Lothian", "South Yorkshire", "Rutland", "Flintshire", "City of Edinburgh", "Derbyshire", "East Dunbartonshire","Stirling","Carmarthenshire","Durham","Dumfries and Galloway","Gwynedd","Wrexham","South Ayrshire","Aberdeenshire","Swansea","Shropshire","Anglesey","Perth and Kinross","Dundee City","Merseyside","Lancashire","Angus","Fife","Moray","Nottinghamshire","Greater Manchester","Scottish Borders","Fermanagh","West Dunbartonshire","Renfrewshire","North Ayrshire","Argyll and Bute","Clackmannanshire","West Lothian","Falkirk","Newport","East Ayrshire","Inverclyde","Torfaen","Blaenau Gwent","Caerphilly","Rhondda Cynon Taf","Vale of Glamorgan","Bridgend","Neath Port Talbot","Powys","Denbighshire","Conwy","East Renfrewshire","Western Isles","North Lanarkshire","Orkney","Merthyr Tydfil","Down","Antrim","Londonderry","Shetland Islands","Tyrone","Armagh","Cardiff","Bristol"],
-    "england": ["Greater London","Suffolk","Essex","Wiltshire","East Sussex","Staffordshire","Cambridgeshire", "Somerset", "Cheshire", "Lincolnshire", "Surrey", "Hampshire", "West Sussex", "Hertfordshire", "West Yorkshire", "West Midlands", "Norfolk", "Cumbria", "Isle of Wight", "Cornwall", "Devon", "Oxfordshire", "Berkshire", "Buckinghamshire", "Gloucestershire", "Bedfordshire", "Monmouthshire", "Ceredigion", "Dorset", "Leicestershire", "South Lanarkshire", "Highland", "Warwickshire", "Northamptonshire", "Glasgow City", "Worcestershire", "Northumberland", "Kent", "North Yorkshire", "East Riding of Yorkshire", "Tyne and Wear", "Herefordshire", "South Yorkshire", "Rutland", "Derbyshire", "Durham", "Shropshire", "Merseyside", "Lancashire", "Nottinghamshire", "Greater Manchester", "Bristol"], 
-    "wales": ["Pembrokeshire", "Monmouthshire", "Ceredigion", "Gwynedd", "Swansea", "Torfaen", "Blaenau Gwent", "Caerphilly", "Rhondda Cynon Taf", "Vale of Glamorgan", "Bridgend", "Neath Port Talbot", "Powys", "Denbighshire", "Conwy", "Cardiff", "Anglesey", "Merthyr Tydfil", "Carmarthenshire", "Flintshire", "Wrexham", "Newport"],
-    "scotland": ["South Lanarkshire", "Highland", "Midlothian", "East Lothian", "Glasgow City", "North Lanarkshire", "Dundee City", "Angus", "Fife", "Moray", "Scottish Borders", "West Dunbartonshire", "Renfrewshire", "North Ayrshire", "Argyll and Bute", "Clackmannanshire", "West Lothian", "Falkirk", "East Ayrshire", "Inverclyde", "Western Isles", "Orkney", "Shetland Islands", "Stirling", "Perth and Kinross", "Aberdeenshire","City of Edinburgh","East Dunbartonshire", "South Ayrshire", "Dumfries and Galloway", "Aberdeen City", "East Renfrewshire"],
-    "ni": ["Fermanagh","Down","Antrim","Londonderry","Tyrone","Armagh"],
-    "lincolnshire": ["Lincolnshire"]
+  "greaterlondon": {
+    "geofile": "greaterlondon.geojson",
+    "name": "Greater London",
+    "valid-counties": [
+      "Greater London"
+    ]
+  },
+  "greatermanchester": {
+    "geofile": "greatermanchester.geojson",
+    "name": "Greater Manchester",
+    "valid-counties": [
+      "Greater Manchester"
+    ]
+  },
+  "merseyside": {
+    "geofile": "merseyside.geojson",
+    "name": "Merseyside",
+    "valid-counties": [
+      "Merseyside"
+    ]
+  },
+  "southyorkshire": {
+    "geofile": "southyorkshire.geojson",
+    "name": "South Yorkshire",
+    "valid-counties": [
+      "South Yorkshire"
+    ]
+  },
+  "tyneandwear": {
+    "geofile": "tyneandwear.geojson",
+    "name": "Tyne and Wear",
+    "valid-counties": [
+      "Tyne and Wear"
+    ]
+  },
+  "westmidlands": {
+    "geofile": "westmidlands.geojson",
+    "name": "the West Midlands",
+    "valid-counties": [
+      "West Midlands"
+    ]
+  },
+  "westyorkshire": {
+    "geofile": "westyorkshire.geojson",
+    "name": "West Yorkshire",
+    "valid-counties": [
+      "West Yorkshire"
+    ]
+  },
+  "northyorkshire": {
+    "geofile": "northyorkshire.geojson",
+    "name": "North Yorkshire",
+    "valid-counties": [
+      "North Yorkshire"
+    ]
+  },
+  "durham": {
+    "geofile": "durham.geojson",
+    "name": "Durham",
+    "valid-counties": [
+      "Durham"
+    ]
+  },
+  "cheshire": {
+    "geofile": "cheshire.geojson",
+    "name": "Cheshire",
+    "valid-counties": [
+      "Cheshire"
+    ]
+  },
+  "lancashire": {
+    "geofile": "lancashire.geojson",
+    "name": "Lancashire",
+    "valid-counties": [
+      "Lancashire"
+    ]
+  },
+  "eastridingofyorkshire": {
+    "geofile": "eastridingofyorkshire.geojson",
+    "name": "the East Riding of Yorkshire",
+    "valid-counties": [
+      "East Riding of Yorkshire"
+    ]
+  },
+  "lincolnshire": {
+    "geofile": "lincolnshire.geojson",
+    "name": "Lincolnshire",
+    "valid-counties": [
+      "Lincolnshire"
+    ]
+  },
+  "derbyshire": {
+    "geofile": "derbyshire.geojson",
+    "name": "Derbyshire",
+    "valid-counties": [
+      "Derbyshire"
+    ]
+  },
+  "rutland": {
+    "geofile": "rutland.geojson",
+    "name": "Rutland",
+    "valid-counties": [
+      "Rutland"
+    ]
+  },
+  "nottinghamshire": {
+    "geofile": "nottinghamshire.geojson",
+    "name": "Nottinghamshire",
+    "valid-counties": [
+      "Nottinghamshire"
+    ]
+  },
+  "somerset": {
+    "geofile": "somerset.geojson",
+    "name": "Somerset",
+    "valid-counties": [
+      "Somerset"
+    ]
+  },
+  "bristol": {
+    "geofile": "bristol.geojson",
+    "name": "Bristol",
+    "valid-counties": [
+      "Bristol"
+    ]
+  },
+  "gloucestershire": {
+    "geofile": "gloucestershire.geojson",
+    "name": "Gloucestershire",
+    "valid-counties": [
+      "Gloucestershire"
+    ]
+  },
+  "devon": {
+    "geofile": "devon.geojson",
+    "name": "Devon",
+    "valid-counties": [
+      "Devon"
+    ]
+  },
+  "dorset": {
+    "geofile": "dorset.geojson",
+    "name": "Dorset",
+    "valid-counties": [
+      "Dorset"
+    ]
+  },
+  "cambridgeshire": {
+    "geofile": "cambridgeshire.geojson",
+    "name": "Cambridgeshire",
+    "valid-counties": [
+      "Cambridgeshire"
+    ]
+  },
+  "bedfordshire": {
+    "geofile": "bedfordshire.geojson",
+    "name": "Bedfordshire",
+    "valid-counties": [
+      "Bedfordshire"
+    ]
+  },
+  "essex": {
+    "geofile": "essex.geojson",
+    "name": "Essex",
+    "valid-counties": [
+      "Essex"
+    ]
+  },
+  "kent": {
+    "geofile": "kent.geojson",
+    "name": "Kent",
+    "valid-counties": [
+      "Kent"
+    ]
+  },
+  "berkshire": {
+    "geofile": "berkshire.geojson",
+    "name": "Berkshire",
+    "valid-counties": [
+      "Berkshire"
+    ]
+  },
+  "eastsussex": {
+    "geofile": "eastsussex.geojson",
+    "name": "East Sussex",
+    "valid-counties": [
+      "East Sussex"
+    ]
+  },
+  "hampshire": {
+    "geofile": "hampshire.geojson",
+    "name": "Hampshire",
+    "valid-counties": [
+      "Hampshire"
+    ]
+  },
+  "buckinghamshire": {
+    "geofile": "buckinghamshire.geojson",
+    "name": "Buckinghamshire",
+    "valid-counties": [
+      "Buckinghamshire"
+    ]
+  },
+  "cumbria": {
+    "geofile": "cumbria.geojson",
+    "name": "Cumbria",
+    "valid-counties": [
+      "Cumbria"
+    ]
+  },
+  "hertfordshire": {
+    "geofile": "hertfordshire.geojson",
+    "name": "Hertfordshire",
+    "valid-counties": [
+      "Hertfordshire"
+    ]
+  },
+  "leicestershire": {
+    "geofile": "leicestershire.geojson",
+    "name": "Leicestershire",
+    "valid-counties": [
+      "Leicestershire"
+    ]
+  },
+  "norfolk": {
+    "geofile": "norfolk.geojson",
+    "name": "Norfolk",
+    "valid-counties": [
+      "Norfolk"
+    ]
+  },
+  "northamptonshire": {
+    "geofile": "northamptonshire.geojson",
+    "name": "Northamptonshire",
+    "valid-counties": [
+      "Northamptonshire"
+    ]
+  },
+  "oxfordshire": {
+    "geofile": "oxfordshire.geojson",
+    "name": "Oxfordshire",
+    "valid-counties": [
+      "Oxfordshire"
+    ]
+  },
+  "staffordshire": {
+    "geofile": "staffordshire.geojson",
+    "name": "Staffordshire",
+    "valid-counties": [
+      "Staffordshire"
+    ]
+  },
+  "suffolk": {
+    "geofile": "suffolk.geojson",
+    "name": "Suffolk",
+    "valid-counties": [
+      "Suffolk"
+    ]
+  },
+  "surrey": {
+    "geofile": "surrey.geojson",
+    "name": "Surrey",
+    "valid-counties": [
+      "Surrey"
+    ]
+  },
+  "warwickshire": {
+    "geofile": "warwickshire.geojson",
+    "name": "Warwickshire",
+    "valid-counties": [
+      "Warwickshire"
+    ]
+  },
+  "westsussex": {
+    "geofile": "westsussex.geojson",
+    "name": "West Sussex",
+    "valid-counties": [
+      "West Sussex"
+    ]
+  },
+  "worcestershire": {
+    "geofile": "worcestershire.geojson",
+    "name": "Worcestershire",
+    "valid-counties": [
+      "Worcestershire"
+    ]
+  },
+  "shropshire": {
+    "geofile": "shropshire.geojson",
+    "name": "Shropshire",
+    "valid-counties": [
+      "Shropshire"
+    ]
+  },
+  "cornwall": {
+    "geofile": "cornwall.geojson",
+    "name": "Cornwall",
+    "valid-counties": [
+      "Cornwall"
+    ]
+  },
+  "wiltshire": {
+    "geofile": "wiltshire.geojson",
+    "name": "Wiltshire",
+    "valid-counties": [
+      "Wiltshire"
+    ]
+  },
+  "isleofwight": {
+    "geofile": "isleofwight.geojson",
+    "name": "the Isle of Wight",
+    "valid-counties": [
+      "Isle of Wight"
+    ]
+  },
+  "northumberland": {
+    "geofile": "northumberland.geojson",
+    "name": "Northumberland",
+    "valid-counties": [
+      "Northumberland"
+    ]
+  },
+  "herefordshire": {
+    "geofile": "herefordshire.geojson",
+    "name": "Herefordshire",
+    "valid-counties": [
+      "Herefordshire"
+    ]
+  },
+  "aberdeenshire": {
+    "geofile": "aberdeenshire.geojson",
+    "name": "Aberdeenshire",
+    "valid-counties": [
+      "Aberdeenshire"
+    ]
+  },
+  "angus": {
+    "geofile": "angus.geojson",
+    "name": "Angus",
+    "valid-counties": [
+      "Angus"
+    ]
+  },
+  "argyllandbute": {
+    "geofile": "argyllandbute.geojson",
+    "name": "Argyll and Bute",
+    "valid-counties": [
+      "Argyll and Bute"
+    ]
+  },
+  "clackmannanshire": {
+    "geofile": "clackmannanshire.geojson",
+    "name": "Clackmannanshire",
+    "valid-counties": [
+      "Clackmannanshire"
+    ]
+  },
+  "dumfriesandgalloway": {
+    "geofile": "dumfriesandgalloway.geojson",
+    "name": "Dumfries and Galloway",
+    "valid-counties": [
+      "Dumfries and Galloway"
+    ]
+  },
+  "dundeecity": {
+    "geofile": "dundeecity.geojson",
+    "name": "Dundee City",
+    "valid-counties": [
+      "Dundee City"
+    ]
+  },
+  "eastayrshire": {
+    "geofile": "eastayrshire.geojson",
+    "name": "East Ayrshire",
+    "valid-counties": [
+      "East Ayrshire"
+    ]
+  },
+  "eastdunbartonshire": {
+    "geofile": "eastdunbartonshire.geojson",
+    "name": "East Dunbartonshire",
+    "valid-counties": [
+      "East Dunbartonshire"
+    ]
+  },
+  "eastlothian": {
+    "geofile": "eastlothian.geojson",
+    "name": "East Lothian",
+    "valid-counties": [
+      "East Lothian"
+    ]
+  },
+  "eastrenfrewshire": {
+    "geofile": "eastrenfrewshire.geojson",
+    "name": "East Renfrewshire",
+    "valid-counties": [
+      "East Renfrewshire"
+    ]
+  },
+  "cityofedinburgh": {
+    "geofile": "cityofedinburgh.geojson",
+    "name": "the City of Edinburgh",
+    "valid-counties": [
+      "City of Edinburgh"
+    ]
+  },
+  "westernisles": {
+    "geofile": "westernisles.geojson",
+    "name": "the Western Isles",
+    "valid-counties": [
+      "Western Isles"
+    ]
+  },
+  "falkirk": {
+    "geofile": "falkirk.geojson",
+    "name": "Falkirk",
+    "valid-counties": [
+      "Falkirk"
+    ]
+  },
+  "fife": {
+    "geofile": "fife.geojson",
+    "name": "Fife",
+    "valid-counties": [
+      "Fife"
+    ]
+  },
+  "glasgowcity": {
+    "geofile": "glasgowcity.geojson",
+    "name": "Glasgow City",
+    "valid-counties": [
+      "Glasgow City"
+    ]
+  },
+  "highland": {
+    "geofile": "highland.geojson",
+    "name": "Highland",
+    "valid-counties": [
+      "Highland"
+    ]
+  },
+  "inverclyde": {
+    "geofile": "inverclyde.geojson",
+    "name": "Inverclyde",
+    "valid-counties": [
+      "Inverclyde"
+    ]
+  },
+  "midlothian": {
+    "geofile": "midlothian.geojson",
+    "name": "Midlothian",
+    "valid-counties": [
+      "Midlothian"
+    ]
+  },
+  "moray": {
+    "geofile": "moray.geojson",
+    "name": "Moray",
+    "valid-counties": [
+      "Moray"
+    ]
+  },
+  "northayrshire": {
+    "geofile": "northayrshire.geojson",
+    "name": "North Ayrshire",
+    "valid-counties": [
+      "North Ayrshire"
+    ]
+  },
+  "northlanarkshire": {
+    "geofile": "northlanarkshire.geojson",
+    "name": "North Lanarkshire",
+    "valid-counties": [
+      "North Lanarkshire"
+    ]
+  },
+  "orkney": {
+    "geofile": "orkney.geojson",
+    "name": "Orkney",
+    "valid-counties": [
+      "Orkney"
+    ]
+  },
+  "perthandkinross": {
+    "geofile": "perthandkinross.geojson",
+    "name": "Perth and Kinross",
+    "valid-counties": [
+      "Perth and Kinross"
+    ]
+  },
+  "renfrewshire": {
+    "geofile": "renfrewshire.geojson",
+    "name": "Renfrewshire",
+    "valid-counties": [
+      "Renfrewshire"
+    ]
+  },
+  "scottishborders": {
+    "geofile": "scottishborders.geojson",
+    "name": "the Scottish Borders",
+    "valid-counties": [
+      "Scottish Borders"
+    ]
+  },
+  "shetlandislands": {
+    "geofile": "shetlandislands.geojson",
+    "name": "Shetland Islands",
+    "valid-counties": [
+      "Shetland Islands"
+    ]
+  },
+  "southayrshire": {
+    "geofile": "southayrshire.geojson",
+    "name": "South Ayrshire",
+    "valid-counties": [
+      "South Ayrshire"
+    ]
+  },
+  "southlanarkshire": {
+    "geofile": "southlanarkshire.geojson",
+    "name": "South Lanarkshire",
+    "valid-counties": [
+      "South Lanarkshire"
+    ]
+  },
+  "stirling": {
+    "geofile": "stirling.geojson",
+    "name": "Stirling",
+    "valid-counties": [
+      "Stirling"
+    ]
+  },
+  "westdunbartonshire": {
+    "geofile": "westdunbartonshire.geojson",
+    "name": "West Dunbartonshire",
+    "valid-counties": [
+      "West Dunbartonshire"
+    ]
+  },
+  "westlothian": {
+    "geofile": "westlothian.geojson",
+    "name": "West Lothian",
+    "valid-counties": [
+      "West Lothian"
+    ]
+  },
+  "gwynedd": {
+    "geofile": "gwynedd.geojson",
+    "name": "Gwynedd",
+    "valid-counties": [
+      "Gwynedd"
+    ]
+  },
+  "conwy": {
+    "geofile": "conwy.geojson",
+    "name": "Conwy",
+    "valid-counties": [
+      "Conwy"
+    ]
+  },
+  "denbighshire": {
+    "geofile": "denbighshire.geojson",
+    "name": "Denbighshire",
+    "valid-counties": [
+      "Denbighshire"
+    ]
+  },
+  "flintshire": {
+    "geofile": "flintshire.geojson",
+    "name": "Flintshire",
+    "valid-counties": [
+      "Flintshire"
+    ]
+  },
+  "wrexham": {
+    "geofile": "wrexham.geojson",
+    "name": "Wrexham",
+    "valid-counties": [
+      "Wrexham"
+    ]
+  },
+  "powys": {
+    "geofile": "powys.geojson",
+    "name": "Powys",
+    "valid-counties": [
+      "Powys"
+    ]
+  },
+  "ceredigion": {
+    "geofile": "ceredigion.geojson",
+    "name": "Ceredigion",
+    "valid-counties": [
+      "Ceredigion"
+    ]
+  },
+  "pembrokeshire": {
+    "geofile": "pembrokeshire.geojson",
+    "name": "Pembrokeshire",
+    "valid-counties": [
+      "Pembrokeshire"
+    ]
+  },
+  "carmarthenshire": {
+    "geofile": "carmarthenshire.geojson",
+    "name": "Carmarthenshire",
+    "valid-counties": [
+      "Carmarthenshire"
+    ]
+  },
+  "swansea": {
+    "geofile": "swansea.geojson",
+    "name": "Swansea",
+    "valid-counties": [
+      "Swansea"
+    ]
+  },
+  "neathporttalbot": {
+    "geofile": "neathporttalbot.geojson",
+    "name": "Neath Port Talbot",
+    "valid-counties": [
+      "Neath Port Talbot"
+    ]
+  },
+  "bridgend": {
+    "geofile": "bridgend.geojson",
+    "name": "Bridgend",
+    "valid-counties": [
+      "Bridgend"
+    ]
+  },
+  "valeofglamorgan": {
+    "geofile": "valeofglamorgan.geojson",
+    "name": "Vale of Glamorgan",
+    "valid-counties": [
+      "Vale of Glamorgan"
+    ]
+  },
+  "rhonddacynontaf": {
+    "geofile": "rhonddacynontaf.geojson",
+    "name": "Rhondda Cynon Taf",
+    "valid-counties": [
+      "Rhondda Cynon Taf"
+    ]
+  },
+  "merthyrtydfil": {
+    "geofile": "merthyrtydfil.geojson",
+    "name": "Merthyr Tydfil",
+    "valid-counties": [
+      "Merthyr Tydfil"
+    ]
+  },
+  "caerphilly": {
+    "geofile": "caerphilly.geojson",
+    "name": "Caerphilly",
+    "valid-counties": [
+      "Caerphilly"
+    ]
+  },
+  "blaenaugwent": {
+    "geofile": "blaenaugwent.geojson",
+    "name": "Blaenau Gwent",
+    "valid-counties": [
+      "Blaenau Gwent"
+    ]
+  },
+  "torfaen": {
+    "geofile": "torfaen.geojson",
+    "name": "Torfaen",
+    "valid-counties": [
+      "Torfaen"
+    ]
+  },
+  "monmouthshire": {
+    "geofile": "monmouthshire.geojson",
+    "name": "Monmouthshire",
+    "valid-counties": [
+      "Monmouthshire"
+    ]
+  },
+  "newport": {
+    "geofile": "newport.geojson",
+    "name": "Newport",
+    "valid-counties": [
+      "Newport"
+    ]
+  },
+  "cardiff": {
+    "geofile": "cardiff.geojson",
+    "name": "Cardiff",
+    "valid-counties": [
+      "Cardiff"
+    ]
+  },
+  "anglesey": {
+    "geofile": "anglesey.geojson",
+    "name": "Anglesey",
+    "valid-counties": [
+      "Anglesey"
+    ]
+  },
+  "tyrone": {
+    "geofile": "tyrone.geojson",
+    "name": "Tyrone",
+    "valid-counties": [
+      "Tyrone"
+    ]
+  },
+  "armagh": {
+    "geofile": "armagh.geojson",
+    "name": "Armagh",
+    "valid-counties": [
+      "Armagh"
+    ]
+  },
+  "down": {
+    "geofile": "down.geojson",
+    "name": "Down",
+    "valid-counties": [
+      "Down"
+    ]
+  },
+  "londonderry": {
+    "geofile": "londonderry.geojson",
+    "name": "Londonderry",
+    "valid-counties": [
+      "Londonderry"
+    ]
+  },
+  "antrim": {
+    "geofile": "antrim.geojson",
+    "name": "Antrim",
+    "valid-counties": [
+      "Antrim"
+    ]
+  },
+  "fermanagh": {
+    "geofile": "fermanagh.geojson",
+    "name": "Fermanagh",
+    "valid-counties": [
+      "Fermanagh"
+    ]
+  },
+  "uk": {
+    "geofile": "uk.geojson",
+    "name": "the United Kingdom",
+    "valid-counties": [
+      "Greater London",
+      "Suffolk",
+      "Essex",
+      "Wiltshire",
+      "East Sussex",
+      "Staffordshire",
+      "Cambridgeshire",
+      "Somerset",
+      "Pembrokeshire",
+      "Cheshire",
+      "Lincolnshire",
+      "Surrey",
+      "Hampshire",
+      "West Sussex",
+      "Hertfordshire",
+      "West Yorkshire",
+      "West Midlands",
+      "Norfolk",
+      "Cumbria",
+      "Isle of Wight",
+      "Cornwall",
+      "Devon",
+      "Oxfordshire",
+      "Berkshire",
+      "Buckinghamshire",
+      "Gloucestershire",
+      "Bedfordshire",
+      "Monmouthshire",
+      "Ceredigion",
+      "Dorset",
+      "Leicestershire",
+      "South Lanarkshire",
+      "Highland",
+      "Warwickshire",
+      "Northamptonshire",
+      "Glasgow City",
+      "Worcestershire",
+      "Northumberland",
+      "Kent",
+      "North Yorkshire",
+      "East Riding of Yorkshire",
+      "Tyne and Wear",
+      "Herefordshire",
+      "Midlothian",
+      "East Lothian",
+      "South Yorkshire",
+      "Rutland",
+      "Flintshire",
+      "City of Edinburgh",
+      "Derbyshire",
+      "East Dunbartonshire",
+      "Stirling",
+      "Carmarthenshire",
+      "Durham",
+      "Dumfries and Galloway",
+      "Gwynedd",
+      "Wrexham",
+      "South Ayrshire",
+      "Aberdeenshire",
+      "Swansea",
+      "Shropshire",
+      "Anglesey",
+      "Perth and Kinross",
+      "Dundee City",
+      "Merseyside",
+      "Lancashire",
+      "Angus",
+      "Fife",
+      "Moray",
+      "Nottinghamshire",
+      "Greater Manchester",
+      "Scottish Borders",
+      "Fermanagh",
+      "West Dunbartonshire",
+      "Renfrewshire",
+      "North Ayrshire",
+      "Argyll and Bute",
+      "Clackmannanshire",
+      "West Lothian",
+      "Falkirk",
+      "Newport",
+      "East Ayrshire",
+      "Inverclyde",
+      "Torfaen",
+      "Blaenau Gwent",
+      "Caerphilly",
+      "Rhondda Cynon Taf",
+      "Vale of Glamorgan",
+      "Bridgend",
+      "Neath Port Talbot",
+      "Powys",
+      "Denbighshire",
+      "Conwy",
+      "East Renfrewshire",
+      "Western Isles",
+      "North Lanarkshire",
+      "Orkney",
+      "Merthyr Tydfil",
+      "Down",
+      "Antrim",
+      "Londonderry",
+      "Shetland Islands",
+      "Tyrone",
+      "Armagh",
+      "Cardiff",
+      "Bristol"
+    ]
+  },
+  "england": {
+    "geofile": "england.geojson",
+    "name": "England",
+    "valid-counties": [
+      "Greater London",
+      "Suffolk",
+      "Essex",
+      "Wiltshire",
+      "East Sussex",
+      "Staffordshire",
+      "Cambridgeshire",
+      "Somerset",
+      "Cheshire",
+      "Lincolnshire",
+      "Surrey",
+      "Hampshire",
+      "West Sussex",
+      "Hertfordshire",
+      "West Yorkshire",
+      "West Midlands",
+      "Norfolk",
+      "Cumbria",
+      "Isle of Wight",
+      "Cornwall",
+      "Devon",
+      "Oxfordshire",
+      "Berkshire",
+      "Buckinghamshire",
+      "Gloucestershire",
+      "Bedfordshire",
+      "Monmouthshire",
+      "Ceredigion",
+      "Dorset",
+      "Leicestershire",
+      "South Lanarkshire",
+      "Highland",
+      "Warwickshire",
+      "Northamptonshire",
+      "Glasgow City",
+      "Worcestershire",
+      "Northumberland",
+      "Kent",
+      "North Yorkshire",
+      "East Riding of Yorkshire",
+      "Tyne and Wear",
+      "Herefordshire",
+      "South Yorkshire",
+      "Rutland",
+      "Derbyshire",
+      "Durham",
+      "Shropshire",
+      "Merseyside",
+      "Lancashire",
+      "Nottinghamshire",
+      "Greater Manchester",
+      "Bristol"
+    ]
+  },
+  "wales": {
+    "geofile": "wales.geojson",
+    "name": "Wales",
+    "valid-counties": [
+      "Pembrokeshire",
+      "Monmouthshire",
+      "Ceredigion",
+      "Gwynedd",
+      "Swansea",
+      "Torfaen",
+      "Blaenau Gwent",
+      "Caerphilly",
+      "Rhondda Cynon Taf",
+      "Vale of Glamorgan",
+      "Bridgend",
+      "Neath Port Talbot",
+      "Powys",
+      "Denbighshire",
+      "Conwy",
+      "Cardiff",
+      "Anglesey",
+      "Merthyr Tydfil",
+      "Carmarthenshire",
+      "Flintshire",
+      "Wrexham",
+      "Newport"
+    ]
+  },
+  "scotland": {
+    "geofile": "scotland.geojson",
+    "name": "Scotland",
+    "valid-counties": [
+      "South Lanarkshire",
+      "Highland",
+      "Midlothian",
+      "East Lothian",
+      "Glasgow City",
+      "North Lanarkshire",
+      "Dundee City",
+      "Angus",
+      "Fife",
+      "Moray",
+      "Scottish Borders",
+      "West Dunbartonshire",
+      "Renfrewshire",
+      "North Ayrshire",
+      "Argyll and Bute",
+      "Clackmannanshire",
+      "West Lothian",
+      "Falkirk",
+      "East Ayrshire",
+      "Inverclyde",
+      "Western Isles",
+      "Orkney",
+      "Shetland Islands",
+      "Stirling",
+      "Perth and Kinross",
+      "Aberdeenshire",
+      "City of Edinburgh",
+      "East Dunbartonshire",
+      "South Ayrshire",
+      "Dumfries and Galloway",
+      "Aberdeen City",
+      "East Renfrewshire"
+    ]
+  },
+  "ni": {
+    "geofile": "ni.geojson",
+    "name": "Northern Ireland",
+    "valid-counties": [
+      "Fermanagh",
+      "Down",
+      "Antrim",
+      "Londonderry",
+      "Shetland Islands",
+      "Tyrone",
+      "Armagh"
+    ]
+  }
 }

@@ -1,8 +1,8 @@
 *.db
 *.csv
-*.geojson
 *.txt
 __pycache__
 .notes
 .archive
 gamedata
+static/geo

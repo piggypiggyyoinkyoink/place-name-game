@@ -26,7 +26,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/static", StaticFiles(directory="client"), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/init")
@@ -53,7 +53,7 @@ def init(uid_json: Annotated[str | None, Cookie()] = None, type: str | None = "u
     response = JSONResponse(content=init_content)
     cookie[f"uid-{type}"] = uid
     cookie_str = json.dumps(cookie)
-    response.set_cookie(key="uid_json", value=cookie_str, httponly=False, samesite="lax", secure=False)
+    response.set_cookie(key="uid_json", value=cookie_str, httponly=False, samesite="lax", secure=False, max_age=99999999999)
     return response
 
 
@@ -61,7 +61,8 @@ def init(uid_json: Annotated[str | None, Cookie()] = None, type: str | None = "u
 def query(text: str, type: str, uid_json: Annotated[str | None, Cookie()] = None):
     with open("typemap.json", "r") as f:
         typemap = json.load(f)
-    valid_counties = typemap.get(type, [])
+    typedata = typemap.get(type, [])
+    valid_counties = typedata.get("valid-counties", [])
     if len(valid_counties) == 1:
         valid_counties.append("Penis") # fucking sqlite hates single elements in IN statements so need to add garbage
     con = sqlite3.connect("data.db")
@@ -94,7 +95,8 @@ def query(text: str, type: str, uid_json: Annotated[str | None, Cookie()] = None
 def get_total(type : str):
     with open("typemap.json", "r") as f:
         typemap = json.load(f)
-    valid_counties = typemap.get(type, [])
+    typedata = typemap.get(type, [])
+    valid_counties = typedata.get("valid-counties", [])
     print("Valid counties:", valid_counties)
     if len(valid_counties) == 1:
         valid_counties.append("Penis") # fucking sqlite hates single elements in IN statements so need to add garbage
@@ -113,6 +115,12 @@ def get_data(uid: str):
             return response
     except:
         return JSONResponse(content={"error": "Data not found"}, status_code=404)
+
+@app.get("/typemap")
+def get_typemap():
+    with open("typemap.json", "r") as f:
+        typemap = json.load(f)
+    return typemap
 
 @app.get("/all")
 def all():
