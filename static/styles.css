@@ -54,3 +54,34 @@ div.top{
     max-width: 400px;
     width:fit-content;
 }
+.card-title{
+    text-align: center;
+}
+
+.crd{
+    border: 2px solid #000000;
+    border-radius: 20px;
+    background-color: #f8f9fa;
+}
+
+
+
+.crd:hover {
+    cursor: pointer;
+    background-color: #e9ecef;
+    animation-name: wiggle;
+    animation-duration: 1200ms;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in-out;
+    transform: scale(1.05);
+}
+
+
+@keyframes wiggle {
+  0% {transform: rotate(0deg) scale(1.01);}
+  20% {transform: rotate(5deg) scale(1.02);}
+  40% {transform: rotate(-5deg) scale(1.03);}
+  60% {transform: rotate(10deg) scale(1.04);}
+  80% {transform: rotate(-2.5deg) scale(1.05);}
+  100% {transform: rotate(0deg) scale(1.05);}
+}

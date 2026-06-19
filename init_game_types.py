@@ -1,10 +1,10 @@
 import json, os
 
-UK_COUNTIES=["Greater London","Suffolk","Essex","Wiltshire","East Sussex","Staffordshire","Cambridgeshire", "Somerset", "Pembrokeshire", "Cheshire", "Lincolnshire", "Surrey", "Hampshire", "West Sussex", "Hertfordshire", "West Yorkshire", "West Midlands", "Norfolk", "Cumbria", "Isle of Wight", "Cornwall", "Devon", "Oxfordshire", "Berkshire", "Buckinghamshire", "Gloucestershire", "Bedfordshire", "Monmouthshire", "Ceredigion", "Dorset", "Leicestershire", "South Lanarkshire", "Highland", "Warwickshire", "Northamptonshire", "Glasgow City", "Worcestershire", "Northumberland", "Kent", "North Yorkshire", "East Riding of Yorkshire", "Tyne and Wear", "Herefordshire", "Midlothian", "East Lothian", "South Yorkshire", "Rutland", "Flintshire", "City of Edinburgh", "Derbyshire", "East Dunbartonshire","Stirling","Carmarthenshire","Durham","Dumfries and Galloway","Gwynedd","Wrexham","South Ayrshire","Aberdeenshire","Swansea","Shropshire","Anglesey","Perth and Kinross","Dundee City","Merseyside","Lancashire","Angus","Fife","Moray","Nottinghamshire","Greater Manchester","Scottish Borders","Fermanagh","West Dunbartonshire","Renfrewshire","North Ayrshire","Argyll and Bute","Clackmannanshire","West Lothian","Falkirk","Newport","East Ayrshire","Inverclyde","Torfaen","Blaenau Gwent","Caerphilly","Rhondda Cynon Taf","Vale of Glamorgan","Bridgend","Neath Port Talbot","Powys","Denbighshire","Conwy","East Renfrewshire","Western Isles","North Lanarkshire","Orkney","Merthyr Tydfil","Down","Antrim","Londonderry","Shetland Islands","Tyrone","Armagh","Cardiff","Bristol"]
-ENGLAND_COUNTIES = ["Greater London","Suffolk","Essex","Wiltshire","East Sussex","Staffordshire","Cambridgeshire", "Somerset", "Cheshire", "Lincolnshire", "Surrey", "Hampshire", "West Sussex", "Hertfordshire", "West Yorkshire", "West Midlands", "Norfolk", "Cumbria", "Isle of Wight", "Cornwall", "Devon", "Oxfordshire", "Berkshire", "Buckinghamshire", "Gloucestershire", "Bedfordshire", "Monmouthshire", "Ceredigion", "Dorset", "Leicestershire", "South Lanarkshire", "Highland", "Warwickshire", "Northamptonshire", "Glasgow City", "Worcestershire", "Northumberland", "Kent", "North Yorkshire", "East Riding of Yorkshire", "Tyne and Wear", "Herefordshire", "South Yorkshire", "Rutland", "Derbyshire", "Durham", "Shropshire", "Merseyside", "Lancashire", "Nottinghamshire", "Greater Manchester", "Bristol"]
+ENGLAND_COUNTIES = ["Greater London","Suffolk","Essex","Wiltshire","East Sussex","Staffordshire","Cambridgeshire", "Somerset", "Cheshire", "Lincolnshire", "Surrey", "Hampshire", "West Sussex", "Hertfordshire", "West Yorkshire", "West Midlands", "Norfolk", "Cumbria", "Isle of Wight", "Cornwall", "Devon", "Oxfordshire", "Berkshire", "Buckinghamshire", "Gloucestershire", "Bedfordshire", "Dorset", "Leicestershire", "Warwickshire", "Northamptonshire", "Worcestershire", "Northumberland", "Kent", "North Yorkshire", "East Riding of Yorkshire", "Tyne and Wear", "Herefordshire", "South Yorkshire", "Rutland", "Derbyshire", "Durham", "Shropshire", "Merseyside", "Lancashire", "Nottinghamshire", "Greater Manchester", "Bristol"]
 WALES_COUNTIES = ["Pembrokeshire", "Monmouthshire", "Ceredigion", "Gwynedd", "Swansea", "Torfaen", "Blaenau Gwent", "Caerphilly", "Rhondda Cynon Taf", "Vale of Glamorgan", "Bridgend", "Neath Port Talbot", "Powys", "Denbighshire", "Conwy", "Cardiff", "Anglesey", "Merthyr Tydfil", "Carmarthenshire", "Flintshire", "Wrexham", "Newport"]
 SCOTLAND_COUNTIES = ["South Lanarkshire", "Highland", "Midlothian", "East Lothian", "Glasgow City", "North Lanarkshire", "Dundee City", "Angus", "Fife", "Moray", "Scottish Borders", "West Dunbartonshire", "Renfrewshire", "North Ayrshire", "Argyll and Bute", "Clackmannanshire", "West Lothian", "Falkirk", "East Ayrshire", "Inverclyde", "Western Isles", "Orkney", "Shetland Islands", "Stirling", "Perth and Kinross", "Aberdeenshire","City of Edinburgh","East Dunbartonshire", "South Ayrshire", "Dumfries and Galloway", "Aberdeen City", "East Renfrewshire"]
 NI_COUNTIES = ["Fermanagh","Down","Antrim","Londonderry","Tyrone","Armagh"]
+UK_COUNTIES = ENGLAND_COUNTIES + WALES_COUNTIES + SCOTLAND_COUNTIES + NI_COUNTIES
 
 OUT_DIR = "static/geo"
 
@@ -34,7 +34,7 @@ for feature in data["features"]:
         scotland_geodata["features"].append(feature)
     if county in NI_COUNTIES:
         ni_geodata["features"].append(feature)
-    if county in ["Bristol", "Glasgow City", "Dundee City"]:
+    if county in ["Bristol", "Glasgow City", "Dundee City", "Aberdeen City"]:
         continue # remove city counties as they are irrelevant
     name = county.replace(" ", "").replace("-", "").replace("'", "").replace(".", "").replace("(", "").replace(")", "").replace(",", "").lower()
     with open(f"{OUT_DIR}/{name}.geojson", "w", encoding="utf-8") as outfile:
@@ -66,5 +66,5 @@ typemap_json["scotland"] = {"geofile": "scotland.geojson", "name": "Scotland", "
 typemap_json["ni"] = {"geofile": "ni.geojson", "name": "Northern Ireland", "valid-counties": NI_COUNTIES, "high-scores": []}
 
 
-# with open("typemap.json", "w") as f:
-#     json.dump(typemap_json, f, indent=2)
+with open("typemap.json", "w") as f:
+    json.dump(typemap_json, f, indent=2)
