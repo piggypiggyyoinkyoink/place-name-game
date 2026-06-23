@@ -10,18 +10,18 @@ let type;
 let regionName;
 window.addEventListener("DOMContentLoaded", async () => {
     async function fetchGeoJSON(type) {
-        const res = await fetch("/typemap");
+        const res = await fetch("./typemap");
         const typemap = await res.json();
         console.log(typemap);
         if (!typemap[type]) {
             throw new Error(`Invalid type: ${type}`);
-            window.location.href = "/static/home.html"; 
+            window.location.href = "./"; 
             return;
         }
         const filename = typemap[type].geofile;
         regionName = typemap[type].name;
         document.getElementById("h1").textContent = "How many places can you name in " + regionName + "?";
-        const response = await fetch(`/static/geo/${filename}`);
+        const response = await fetch(`./static/geo/${filename}`);
         const geoData = await response.json();
         return geoData;
     }
@@ -89,7 +89,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         }
         document.getElementById("message").textContent = "⠀";
         if (placeName.length >= 2) {
-            const response = await fetch(`/query?text=${encodeURIComponent(placeName)}&type=${type}`, { credentials: 'include' });
+            const response = await fetch(`./query?text=${encodeURIComponent(placeName)}&type=${type}`, { credentials: 'include' });
             if (!response.ok) {
                 console.error("Failed to query place");
                 return;
@@ -115,7 +115,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         const searchParams = new URLSearchParams(paramsString)
         type = searchParams.get("type")|| "uk";
         await drawMap();
-        const response = await fetch(`/init?type=${type}`, { credentials: 'include' });
+        const response = await fetch(`./init?type=${type}`, { credentials: 'include' });
         if (!response.ok) {
             console.error("Failed to initialize session");
             return;
@@ -126,7 +126,7 @@ window.addEventListener("DOMContentLoaded", async () => {
             enteredPlaces.push(place.name.toLowerCase().trim().replaceAll(" ",""));
         }
         document.getElementById("nameInput").value = data.name || "";
-        const total = await fetch("/howmany?type=" + type);
+        const total = await fetch(`./howmany?type=${type}`);
         const totalData = await total.json();
         totalPlaces = totalData.total;
         document.getElementById("placesHeader").textContent = `Places Entered: ${numPlaces} / ${totalPlaces}`;
@@ -137,7 +137,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("nameInput").addEventListener("blur", async (event) => {
         const name = event.target.value.trim();
         if (name) {
-            const response = await fetch(`/setname?type=${type}&name=${encodeURIComponent(name)}`, { credentials: 'include' });
+            const response = await fetch(`./setname?type=${type}&name=${encodeURIComponent(name)}`, { credentials: 'include' });
             if (!response.ok) {
                 console.error("Failed to set name");
                 return;
@@ -149,25 +149,26 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById("finishButton").addEventListener("click", async () => {
         const name = document.getElementById("nameInput").value.trim();
-        const response = await fetch(`/finish?type=${type}&name=${encodeURIComponent(name)}`, { credentials: 'include' });
+        const response = await fetch(`./finish?type=${type}&name=${encodeURIComponent(name)}`, { credentials: 'include' });
         if (!response.ok) {
             console.error("Failed to finish game");
+            window.location.reload();
             return;
         }
         const data = await response.json();
         console.log(data);
-        window.location.href = `/static/results.html?uid=${data.uid}`;
+        window.location.href = `./results?uid=${data.uid}`;
     });
     
     document.getElementById("resetButton").addEventListener("click", async () => {
-        const response = await fetch(`/reset?type=${type}`, { credentials: 'include' });
+        const response = await fetch(`./reset?type=${type}`, { credentials: 'include' });
         if (!response.ok) {
             console.error("Failed to reset game");
             return;
         }
         const data = await response.json();
         console.log(data);
-        window.location.href = `/static/index.html?type=${type}`;
+        window.location.href = `./game?type=${type}`;
     });
 
 });

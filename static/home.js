@@ -1,18 +1,20 @@
 let projection;
 let resizeTimer;
+let typemap;
+
 window.addEventListener("DOMContentLoaded", async () => {
     async function fetchGeoJSON(type) {
-        const res = await fetch("/typemap");
-        const typemap = await res.json();
+        // const res = await fetch("/typemap");
+        // const typemap = await res.json();
         // console.log(typemap);
         if (!typemap[type]) {
             throw new Error(`Invalid type: ${type}`);
-            window.location.href = "/static/home.html"; 
+            window.location.href = "./"; 
             return;
         }
         const filename = typemap[type].geofile;
         regionName = typemap[type].name;
-        const response = await fetch(`/static/geo/${filename}`);
+        const response = await fetch(`./static/geo/${filename}`);
         const geoData = await response.json();
         return geoData;
     }
@@ -65,9 +67,9 @@ window.addEventListener("DOMContentLoaded", async () => {
         }
         cardTitle.textContent = data.name;
         cardInner.appendChild(cardTitle);
-        const res = await fetch(`/howmany?type=${type}`);
-        const howmany = await res.json();
-        const total = howmany.total;
+        // const res = await fetch(`/howmany?type=${type}`);
+        // const howmany = await res.json();
+        const total = data.total;
         const cardText = document.createElement("p");
         cardText.setAttribute("class", "card-text");
         cardText.textContent = `${total} places`;
@@ -80,19 +82,19 @@ window.addEventListener("DOMContentLoaded", async () => {
         // width = parseInt(width);
         // await drawMap(width, type);
         document.getElementById(`card-${type}`).addEventListener("click", () => {
-            window.location.href = `/static/index.html?type=${type}`;
+            window.location.href = `./game?type=${type}`;
         });
     }
 
     async function init_home(){
-        const res = await fetch("/typemap");
-        const typemap = await res.json();
-        const alltypes = Object.keys(typemap);
+        const res = await fetch("./typemap?howmany=true");
+        typemap = await res.json();
         const countryTypes = ["uk", "england", "scotland", "wales", "ni"];
         const englandCountyTypes = ['greaterlondon', 'suffolk', 'essex', 'wiltshire', 'eastsussex', 'staffordshire', 'cambridgeshire', 'somerset', 'cheshire', 'lincolnshire', 'surrey', 'hampshire', 'westsussex', 'hertfordshire', 'westyorkshire', 'westmidlands', 'norfolk', 'cumbria', 'isleofwight', 'cornwall', 'devon', 'oxfordshire', 'berkshire', 'buckinghamshire', 'gloucestershire', 'bedfordshire', 'dorset', 'leicestershire', 'warwickshire', 'northamptonshire', 'worcestershire', 'northumberland', 'kent', 'northyorkshire', 'eastridingofyorkshire', 'tyneandwear', 'herefordshire', 'southyorkshire', 'rutland', 'derbyshire', 'durham', 'shropshire', 'merseyside', 'lancashire', 'nottinghamshire', 'greatermanchester'].sort();
         const scotlandCountyTypes = ['southlanarkshire', 'highland', 'midlothian', 'eastlothian', 'northlanarkshire', 'angus', 'fife', 'moray', 'scottishborders', 'westdunbartonshire', 'renfrewshire', 'northayrshire', 'argyllandbute', 'clackmannanshire', 'westlothian', 'falkirk', 'eastayrshire', 'inverclyde', 'westernisles', 'orkney', 'shetlandislands', 'stirling', 'perthandkinross', 'aberdeenshire', 'cityofedinburgh', 'eastdunbartonshire', 'southayrshire', 'dumfriesandgalloway', 'eastrenfrewshire'].sort();
         const walesCountyTypes = ['pembrokeshire', 'monmouthshire', 'ceredigion', 'gwynedd', 'swansea', 'torfaen', 'blaenaugwent', 'caerphilly', 'rhonddacynontaf', 'valeofglamorgan', 'bridgend', 'neathporttalbot', 'powys', 'denbighshire', 'conwy', 'anglesey', 'merthyrtydfil', 'carmarthenshire', 'flintshire', 'wrexham', 'newport'].sort();
         const niCountyTypes = ['fermanagh', 'down', 'antrim', 'londonderry', 'tyrone', 'armagh'].sort()
+        const alltypes = countryTypes.concat(englandCountyTypes, scotlandCountyTypes, walesCountyTypes, niCountyTypes);
         for (const type of countryTypes){
             const data = typemap[type];
             await createCard(type, data, "country");
@@ -137,3 +139,20 @@ window.addEventListener("DOMContentLoaded", async () => {
     init_home();
 
 });
+
+// var og_url = document.createElement('meta');
+//   og_url.setAttribute('property', 'og:url');
+//   og_url.content = document.location;
+//   document.getElementsByTagName('head')[0].appendChild(og_url);
+// var og_title = document.createElement('meta');
+//   og_title.setAttribute('property', 'og:title');
+//   og_title.content = "The Place Name Game - Home";
+//     document.getElementsByTagName('head')[0].appendChild(og_title);
+// var og_type = document.createElement('meta');
+//     og_type.setAttribute('property', 'og:type');
+//     og_type.content = "website";
+//     document.getElementsByTagName('head')[0].appendChild(og_type);
+// var og_image = document.createElement('meta');
+//     og_image.setAttribute('property', 'og:image');
+//     og_image.content = "/static/images/image.png";
+//     document.getElementsByTagName('head')[0].appendChild(og_image);

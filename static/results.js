@@ -10,18 +10,18 @@ let type;
 let regionName;
 window.addEventListener("DOMContentLoaded", async () => {
     async function fetchGeoJSON(type) {
-        const res = await fetch("/typemap");
+        const res = await fetch("./typemap");
         const typemap = await res.json();
         console.log(typemap);
         if (!typemap[type]) {
             throw new Error(`Invalid type: ${type}`);
-            // window.location.href = "/static/index.html?type=uk"; // CHANGE TO HOME WHEN HOME EXISTS
+            window.location.href = "./"; 
             return;
         }
         const filename = typemap[type].geofile;
         regionName = typemap[type].name;
         document.getElementById("h1").textContent = "Game Results for " + regionName + ".";
-        const response = await fetch(`/static/geo/${filename}`);
+        const response = await fetch(`./static/geo/${filename}`);
         const geoData = await response.json();
         return geoData;
     }
@@ -85,14 +85,14 @@ window.addEventListener("DOMContentLoaded", async () => {
         const searchParams = new URLSearchParams(paramsString)
         const uid = searchParams.get("uid");
         // type = searchParams.get("type")|| "uk";
-        const response = await fetch(`/data/${uid}`);
+        const response = await fetch(`./data/${uid}`);
         const data = await response.json();
         const name = data.name || "Anonymous";
         type = data.type;
         await drawMap();
         const date = new Date(data.date);
         document.getElementById("details").innerHTML = `Submitted by <b>${name}</b> on ${date.toLocaleString()}. &nbsp;&nbsp; `;
-        document.getElementById("details").innerHTML += `<a id="copyLink" href="#" onclick="copyResultsLink()">Copy results link to clipboard</a>`
+        document.getElementById("details").innerHTML += `<a id="copyLink" href="#">Copy results link to clipboard</a>`
         document.getElementById("copyLink").addEventListener("click", (event) => {
             event.preventDefault();
             window.navigator.clipboard.writeText(window.location.href).then(() => {
@@ -103,11 +103,11 @@ window.addEventListener("DOMContentLoaded", async () => {
             addPlace(place);
             enteredPlaces.push(place.name.toLowerCase().trim().replaceAll(" ",""));
         }
-        const total = await fetch(`/howmany?type=${type}`);
+        const total = await fetch(`./howmany?type=${type}`);
         const totalData = await total.json();
         totalPlaces = totalData.total;
         document.getElementById("placesHeader").textContent = `Places Entered: ${numPlaces} / ${totalPlaces}`;
-        const gameExistsRes = await fetch(`/check-game-exists?type=${type}`);
+        const gameExistsRes = await fetch(`./check-game-exists?type=${type}`);
         const gameExistsData = await gameExistsRes.json();
         if (!gameExistsData.exists) {
             document.getElementById("newGameButton").textContent = `Start new ${regionName} game`;
@@ -115,7 +115,7 @@ window.addEventListener("DOMContentLoaded", async () => {
             document.getElementById("newGameButton").textContent = `Resume your ${regionName} game`;
         }
         document.getElementById("newGameButton").addEventListener("click", async () => {
-            window.location.href = `/static/index.html?type=${type}`;
+            window.location.href = `./game?type=${type}`;
         });
         console.log(data);
     }

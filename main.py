@@ -1,7 +1,8 @@
-from fastapi import FastAPI, Cookie
+from fastapi import FastAPI, Cookie, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
 from typing import Annotated 
 import sqlite3
 import uuid
@@ -12,10 +13,12 @@ import datetime
 if not os.path.exists("gamedata"):
     os.makedirs("gamedata")
 
-app = FastAPI()
+app = FastAPI(root_path="/placenamegame")
 
 origins = [
     "http://localhost:8000",
+    "http://localhost:80",
+    "http://127.0.0.1:80",
     "http://127.0.0.1:8000"
 ]
 
@@ -28,7 +31,7 @@ app.add_middleware(
 )
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
+templates = Jinja2Templates(directory="templates")
 
 @app.get("/init")
 def init(uid_json: Annotated[str | None, Cookie()] = None, type: str | None = "uk"):
@@ -204,11 +207,57 @@ def get_data(uid: str):
         return JSONResponse(content={"error": "Data not found"}, status_code=404)
 
 @app.get("/typemap")
-def get_typemap():
+def get_typemap(howmany: str | None = None):
     with open("typemap.json", "r") as f:
         typemap = json.load(f)
+    if howmany:
+        for type in typemap:
+            count = get_total(type)["total"]
+            typemap[type]["total"] = count
     return typemap
 
+@app.get("/results")
+def get_results(request: Request, uid: str):
+    # try:
+    with open(f"gamedata/{uid}.json", "r") as f:
+        content = json.load(f)
+    if content.get("finished") == False:
+        return JSONResponse(content={"error": "Invalid uid"}, status_code=400)
+    name = content.get("name", "Anonymous")
+    count = content.get("count", 0)
+    if count != 1:
+        count = f"{count} places"
+    else:
+        count = f"{count} place"
+    date = content.get("date", "Unknown")
+    type = content.get("type")
+    typemap = get_typemap()
+    typedata = typemap.get(type, {})
+    type_name = typedata.get("name", "Unknown")
+    return templates.TemplateResponse("results.html", {"request": request, "name": name, "count": count, "date": date, "type": type_name, "uid": uid})
+    
+@app.get("/")
+def home(request: Request):
+    return templates.TemplateResponse("home.html", {"request": request})
+
+@app.get("/game")
+def game(request: Request, type: str):
+    with open("typemap.json", "r") as f:
+        typemap = json.load(f)
+    typedata = typemap.get(type, {})
+    try:
+        type_name = typedata.get("name")
+        if type_name[:3] == "the":
+            type_name_2 = type_name[4:]
+        else:
+            type_name_2 = type_name
+    except KeyError:
+        return JSONResponse(content={"error": "Invalid type"}, status_code=400)
+    return templates.TemplateResponse("index.html", {"request": request, "type": type_name, "type2": type_name_2})
+
+@app.get("/test")
+def test():
+    return {"message": "Test endpoint is working!"}
 # @app.get("/all")
 # def all():
 #     con = sqlite3.connect("data.db")
