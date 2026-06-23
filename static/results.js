@@ -61,10 +61,25 @@ window.addEventListener("DOMContentLoaded", async () => {
             .attr("fill", "rgba(255, 0, 0, 0.5)");
     }
     
+    function highlightPlace(id,lat, lon){
+        const [x, y] = projection([
+            lon,
+            lat
+        ]);
+        svg.append("circle")
+            .attr("id", `highlight-${id}`)
+            .attr("class", "highlight-circle")
+            .attr("cx", x)
+            .attr("cy", y)
+            .attr("r", 4)
+            .attr("fill", "rgb(7, 163, 7)");
+    }
 
-    function addToTable(name, county){
+    function addToTable(place, county){
+        const name = place.name;
         const table = document.getElementById("placesTable");
         const row = table.insertRow(0);
+        row.setAttribute("id", `row-${numPlaces}`);
         const cell0 = row.insertCell(0);
         cell0.textContent = numPlaces;
         const cell1 = row.insertCell(1);
@@ -73,11 +88,30 @@ window.addEventListener("DOMContentLoaded", async () => {
         if (tableContainer.style.overflowY != "scroll" && tableContainer.offsetHeight >= parseInt(window.getComputedStyle(tableContainer).maxHeight)) {
             tableContainer.style.overflowY = "scroll";
         }
+        document.getElementById(`row-${numPlaces}`).addEventListener("mouseover", () => {
+            highlightPlace(numPlaces, place.lat, place.lon);
+        });
+        document.getElementById(`row-${numPlaces}`).addEventListener("mouseout", () => {
+            const highlightCircle = document.getElementById(`highlight-${numPlaces}`);
+            if (highlightCircle) {
+                highlightCircle.remove();
+            }
+        });
+        document.getElementById(`row-${numPlaces}`).addEventListener("touchstart", () => {
+            document.querySelectorAll(".highlight-circle").forEach(circle => circle.remove());
+            highlightPlace(numPlaces, place.lat, place.lon);
+        });
+        document.getElementById(`row-${numPlaces}`).addEventListener("touchend", () => {
+            const highlightCircle = document.getElementById(`highlight-${numPlaces}`);
+            if (highlightCircle) {
+                highlightCircle.remove();
+            }
+        });
     }
     function addPlace(place){
         addToMap({ latitude: place.lat, longitude: place.lon });
         numPlaces++;
-        addToTable(place.name, place.county);
+        addToTable(place, place.county);
     }
 
     async function init(){
@@ -117,7 +151,13 @@ window.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("newGameButton").addEventListener("click", async () => {
             window.location.href = `./game?type=${type}`;
         });
-        console.log(data);
+        // console.log(data);
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("main").style.display = "block";
+        const tableContainer = document.getElementById("tableContainer");
+        if (tableContainer.style.overflowY != "scroll" && tableContainer.offsetHeight >= parseInt(window.getComputedStyle(tableContainer).maxHeight)) {
+            tableContainer.style.overflowY = "scroll";
+        }
     }
     init();
 

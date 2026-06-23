@@ -61,10 +61,25 @@ window.addEventListener("DOMContentLoaded", async () => {
             .attr("fill", "rgba(255, 0, 0, 0.5)");
     }
     
+    function highlightPlace(id,lat, lon){
+        const [x, y] = projection([
+            lon,
+            lat
+        ]);
+        svg.append("circle")
+            .attr("id", `highlight-${id}`)
+            .attr("class", "highlight-circle")
+            .attr("cx", x)
+            .attr("cy", y)
+            .attr("r", 4)
+            .attr("fill", "rgb(7, 163, 7)");
+    }
 
-    function addToTable(name, county){
+    function addToTable(place, county){
+        const name = place.name;
         const table = document.getElementById("placesTable");
         const row = table.insertRow(0);
+        row.setAttribute("id", `row-${numPlaces}`);
         const cell0 = row.insertCell(0);
         cell0.textContent = numPlaces;
         const cell1 = row.insertCell(1);
@@ -73,16 +88,35 @@ window.addEventListener("DOMContentLoaded", async () => {
         if (tableContainer.style.overflowY != "scroll" && tableContainer.offsetHeight >= parseInt(window.getComputedStyle(tableContainer).maxHeight)) {
             tableContainer.style.overflowY = "scroll";
         }
+        document.getElementById(`row-${numPlaces}`).addEventListener("mouseover", () => {
+            highlightPlace(numPlaces, place.lat, place.lon);
+        });
+        document.getElementById(`row-${numPlaces}`).addEventListener("mouseout", () => {
+            const highlightCircle = document.getElementById(`highlight-${numPlaces}`);
+            if (highlightCircle) {
+                highlightCircle.remove();
+            }
+        });
+        document.getElementById(`row-${numPlaces}`).addEventListener("touchstart", () => {
+            document.querySelectorAll(".highlight-circle").forEach(circle => circle.remove());
+            highlightPlace(numPlaces, place.lat, place.lon);
+        });
+        document.getElementById(`row-${numPlaces}`).addEventListener("touchend", () => {
+            const highlightCircle = document.getElementById(`highlight-${numPlaces}`);
+            if (highlightCircle) {
+                highlightCircle.remove();
+            }
+        });
     }
     function addPlace(place){
         addToMap({ latitude: place.lat, longitude: place.lon });
         numPlaces++;
-        addToTable(place.name, place.county);
+        addToTable(place, place.county);
     }
-    document.getElementById("placeInput").addEventListener("keypress", async (event) => {
-        if (event.key !== "Enter") return;
-        // console.log("hello");
-        const placeName = event.target.value;
+
+    async function processPlaceInput() {
+        const placeInput = document.getElementById("placeInput");
+        const placeName = placeInput.value.trim();
         if (enteredPlaces.includes(placeName.toLowerCase().trim().replaceAll(" ",""))) {
             document.getElementById("message").textContent = "Place already entered!";
             return;
@@ -102,14 +136,23 @@ window.addEventListener("DOMContentLoaded", async () => {
                     addPlace(place);
                     document.getElementById("placesHeader").textContent = `Places Entered: ${numPlaces} / ${totalPlaces}`;
                 }
-                enteredPlaces.push(event.target.value.toLowerCase().trim().replaceAll(" ",""));
-                event.target.value = "";
+                enteredPlaces.push(placeName.toLowerCase().trim().replaceAll(" ",""));
+                placeInput.value = "";
             } else if (places.already_guessed) {
                 document.getElementById("message").textContent = "Place already entered!";
             }
         }
-    
+    }
+
+    document.getElementById("placeInput").addEventListener("keypress", async (event) => {
+        if (event.key !== "Enter") return;
+        await processPlaceInput();
     });
+    document.getElementById("placeSubmitButton").addEventListener("click", async () => {
+        await processPlaceInput();
+    });
+
+
     async function init(){
         const paramsString = window.location.search;
         const searchParams = new URLSearchParams(paramsString)
@@ -125,12 +168,20 @@ window.addEventListener("DOMContentLoaded", async () => {
             addPlace(place);
             enteredPlaces.push(place.name.toLowerCase().trim().replaceAll(" ",""));
         }
-        document.getElementById("nameInput").value = data.name || "";
+        if (data.name && data.name.trim() !== "Anonymous") {
+            document.getElementById("nameInput").value = data.name || "";
+        }
         const total = await fetch(`./howmany?type=${type}`);
         const totalData = await total.json();
         totalPlaces = totalData.total;
         document.getElementById("placesHeader").textContent = `Places Entered: ${numPlaces} / ${totalPlaces}`;
-        console.log(data);
+        // console.log(data);
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("main").style.display = "block";
+        const tableContainer = document.getElementById("tableContainer");
+        if (tableContainer.style.overflowY != "scroll" && tableContainer.offsetHeight >= parseInt(window.getComputedStyle(tableContainer).maxHeight)) {
+            tableContainer.style.overflowY = "scroll";
+        }
     }
     init();
 
@@ -148,7 +199,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     });
 
     document.getElementById("finishButton").addEventListener("click", async () => {
-        const name = document.getElementById("nameInput").value.trim();
+        const name = document.getElementById("nameInput").value.trim() || "Anonymous";
         const response = await fetch(`./finish?type=${type}&name=${encodeURIComponent(name)}`, { credentials: 'include' });
         if (!response.ok) {
             console.error("Failed to finish game");

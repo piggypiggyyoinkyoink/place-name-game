@@ -13,53 +13,65 @@
     <meta property="og:site_name" content="The Place Name Game" />
 </head>
 <body>
-    <div class = "top">
-        <h1 id = "h1">Loading...</h1>
-        <p id = "instructions"><a href = "{{url_for('home')}}">Back to Home</a></p>
-        <hr>
+    <div class = "loading" id = "loading">
+        <img src="{{url_for('static', path='loading_map.gif')}}" alt="Loading..." style = "width: 50%;">
+        <h2 id = "loadingText">Loading</h2>
     </div>
-    <div class = "container">
-        <div class = "row" id = "main">
-            <div class = "col-lg-auto c" id="l">
-                <!-- <h3>Map</h3> -->
-                <svg id="map" width="600" height="750"></svg><br>
-            </div>
-            <div class = "col-lg-4 c" id="r">
-                <!-- <h3>Enter Place Names</h3> -->
-                 <br>
-                <input type="text" class = "form-control" id="placeInput" placeholder="Enter a place name">
-                <br>
-                <p id="message">⠀</p>
-                <br>
-                <h3 id = "placesHeader">Places Entered</h3>
-                <table class = "table table-striped" id = "placesTableHeader">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Place</th>
-                        </tr>
-                    </thead>
-                </table>
-                <div id = "tableContainer">
-                    <table class = "table table-striped" id = "placesTable">
+    <div id = "main" style = "display: none;">
+        <div class = "top">
+            <h1 id = "h1">Loading...</h1>
+            <p id = "instructions"><a href = "{{url_for('home')}}">Back to Home</a></p>
+            <hr>
+        </div>
+        <div class = "container">
+            <div class = "row">
+                <div class = "col-lg-auto c" id="l">
+                    <!-- <h3>Map</h3> -->
+                    <svg id="map" width="600" height="750"></svg><br>
+                </div>
+                <div class = "col-lg-4 c" id="r">
+                    <!-- <h3>Enter Place Names</h3> -->
+                    <br>
+                    <div class="input-group mb-3" id = "placeInputGroup">
+                        <input type="text" class = "form-control" id="placeInput" placeholder="Enter a place name">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary" type="button" id="placeSubmitButton">Submit</button>
+                        </div>
+                    </div>
+
+                    <br>
+                    <p id="message">⠀</p>
+                    <br>
+                    <h3 id = "placesHeader">Places Entered</h3>
+                    <table class = "table table-striped" id = "placesTableHeader">
                         <thead>
                             <tr>
-                                
+                                <th scope="col">#</th>
+                                <th scope="col">Place</th>
                             </tr>
                         </thead>
                     </table>
-                </div>
-                <br>
-                <div class = "btncontainer">
-                    <div class = "inputcontainer" style="display:inline-block; padding-bottom:5px;">
-                        <input type="text" class = "form-control" id="nameInput" placeholder="Enter your name...">
+                    <div id = "tableContainer">
+                        <table class = "table table-striped" id = "placesTable">
+                            <thead>
+                                <tr>
+                                    
+                                </tr>
+                            </thead>
+                        </table>
                     </div>
-                    <div class = "buttonscontainer" style="display:inline-block; transform: translateY(-2px);">
-                        <button type="button" class="btn btn-success" id="finishButton">Finish and Save</button>
-                        <button type="button" class="btn btn-danger" id="resetButton">Reset</button>
+                    <br>
+                    <div class = "btncontainer">
+                        <div class = "inputcontainer" style="display:inline-block; padding-bottom:5px;">
+                            <input type="text" class = "form-control" id="nameInput" placeholder="Enter your name...">
+                        </div>
+                        <div class = "buttonscontainer" style="display:inline-block; transform: translateY(-2px);">
+                            <button type="button" class="btn btn-success" id="finishButton">Finish</button>
+                            <button type="button" class="btn btn-danger" id="resetButton">Reset</button>
+                        </div>
                     </div>
-                </div>
 
+                </div>
             </div>
         </div>
     </div>

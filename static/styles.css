@@ -1,10 +1,25 @@
 #placeInput{
-    width:75%;
+    /* width:65%;
     max-width: 400px;
-    margin: auto;
+    margin: auto; */
     font-size: 1.5rem;
     text-align: center;
     border: 2px solid #000000;
+    border-radius: 5px 0px 0px 5px;
+}
+
+#placeInputGroup{
+    width:85%;
+    max-width: 400px;
+    margin: auto;
+}
+
+#placeSubmitButton{
+    font-size: 1.5rem;
+    text-align: center;
+    border: 2px solid #000000;
+    border-radius: 0px 5px 5px 0px;
+    /* background-color: #7ad2f5; */
 }
 
 /* #map{
@@ -86,3 +101,18 @@ div.top{
   100% {transform: rotate(0deg) scale(1.05);}
 }
 
+*{
+    font-family: "Karla", sans-serif;
+}
+
+div.loading{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    margin-top: 50px;
+}
+#loadingText{
+    color:#757474
+}

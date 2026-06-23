@@ -14,41 +14,48 @@
     <meta property="og:site_name" content="The Place Name Game" />
 </head>
 <body>
-    <div class = "top">
-        <h1 id = "h1">Loading...</h1>
-                <p id = "details"></p>
-        
+    <div class = "loading" id = "loading">
+        <img src="{{url_for('static', path='loading_map.gif')}}" alt="Loading..." style = "width: 50%;">
+        <h2 id = "loadingText">Loading</h2>
     </div>
-    <div class = "container">
-        <div class = "row" id = "main">
-            <div class = "col-lg-auto c">
-                <svg id="map" width="600" height="750"></svg>
-            </div>
-            <div class = "col-lg-4 c" id="r">
-                <h3 id = "placesHeader">Places Entered</h3>
-                <table class = "table table-striped" id = "placesTableHeader">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Place</th>
-                        </tr>
-                    </thead>
-                </table>
-                <div id = "tableContainer" style="max-height: 630px;">
-                    <table class = "table table-striped" id = "placesTable">
+    <div id = "main" style = "display: none;">
+        <div class = "top">
+            <h1 id = "h1">Loading...</h1>
+                    <p id = "details"></p>
+            
+        </div>
+        <div class = "container">
+            <div class = "row">
+                <div class = "col-lg-auto c">
+                    <svg id="map" width="600" height="750"></svg>
+                </div>
+                <div class = "col-lg-4 c" id="r">
+                    <h3 id = "placesHeader">Places Entered</h3>
+                    <table class = "table table-striped" id = "placesTableHeader">
                         <thead>
                             <tr>
-                                
+                                <th scope="col">#</th>
+                                <th scope="col">Place</th>
                             </tr>
                         </thead>
                     </table>
+                    <div id = "tableContainer" style="max-height: 630px;">
+                        <table class = "table table-striped" id = "placesTable">
+                            <thead>
+                                <tr>
+                                    
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
                 </div>
             </div>
+            <div class = "btncontainer">
+                <button class="btn btn-primary" id="homeButton" onclick="window.location.href='./'">Go to Home</button>
+                <button class="btn btn-success" id="newGameButton">New Game</button>
+            </div>
         </div>
-        <div class = "btncontainer">
-            <button class="btn btn-primary" id="homeButton" onclick="window.location.href='/'">Go to Home</button>
-            <button class="btn btn-success" id="newGameButton">New Game</button>
-        </div>
+        <br><br>
     </div>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>

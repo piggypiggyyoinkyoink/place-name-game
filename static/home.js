@@ -115,6 +115,8 @@ window.addEventListener("DOMContentLoaded", async () => {
             const data = typemap[type];
             await createCard(type, data, "ni");
         }
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("main").style.display = "block";
         for (const type of alltypes){
             const containerElem = document.getElementById(`map-container-${type}`);
             let width = window.getComputedStyle(containerElem).width;
@@ -140,19 +142,3 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 });
 
-// var og_url = document.createElement('meta');
-//   og_url.setAttribute('property', 'og:url');
-//   og_url.content = document.location;
-//   document.getElementsByTagName('head')[0].appendChild(og_url);
-// var og_title = document.createElement('meta');
-//   og_title.setAttribute('property', 'og:title');
-//   og_title.content = "The Place Name Game - Home";
-//     document.getElementsByTagName('head')[0].appendChild(og_title);
-// var og_type = document.createElement('meta');
-//     og_type.setAttribute('property', 'og:type');
-//     og_type.content = "website";
-//     document.getElementsByTagName('head')[0].appendChild(og_type);
-// var og_image = document.createElement('meta');
-//     og_image.setAttribute('property', 'og:image');
-//     og_image.content = "/static/images/image.png";
-//     document.getElementsByTagName('head')[0].appendChild(og_image);

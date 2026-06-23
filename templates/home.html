@@ -18,7 +18,11 @@
             <p style = "font-size: 1.25rem">How many place names do you know? Select a region to play!</p>
             <hr>
         </div>
-        <div class = "container">
+        <div class = "loading" id = "loading">
+            <img src="{{url_for('static', path='loading_map.gif')}}" alt="Loading..." style = "width: 50%;">
+            <h2 id = "loadingText">Loading</h2>
+        </div>
+        <div class = "container" id = "main" style = "display: none;">
             <h3>Main Regions</h3>
             <hr>
             <div class = "row justify-content-center g-3" id = "country-card-container"></div><br><br>
