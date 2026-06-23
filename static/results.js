@@ -20,7 +20,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         }
         const filename = typemap[type].geofile;
         regionName = typemap[type].name;
-        document.getElementById("h1").textContent = "Game Results for " + regionName + ".";
+        document.getElementById("h1").textContent = "Game Results for " + regionName;
         const response = await fetch(`./static/geo/${filename}`);
         const geoData = await response.json();
         return geoData;

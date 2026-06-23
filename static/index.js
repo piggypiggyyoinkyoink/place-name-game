@@ -130,6 +130,9 @@ window.addEventListener("DOMContentLoaded", async () => {
             }
             const places = await response.json();
             console.log(places);
+            if (!places.results || places.results.length === 0) {
+                document.getElementById("message").textContent = "Place not found!";
+            }
             if (places.results.length > 0) {
                 // console.log("beep");
                 for (const place of places.results) {
@@ -141,15 +144,24 @@ window.addEventListener("DOMContentLoaded", async () => {
             } else if (places.already_guessed) {
                 document.getElementById("message").textContent = "Place already entered!";
             }
+        } else {
+            document.getElementById("message").textContent = "Place not found!";
         }
     }
 
     document.getElementById("placeInput").addEventListener("keypress", async (event) => {
         if (event.key !== "Enter") return;
+        document.getElementById("placeInput").disabled = true;
         await processPlaceInput();
+        document.getElementById("placeInput").disabled = false;
+        document.getElementById("placeInput").focus();
+
     });
     document.getElementById("placeSubmitButton").addEventListener("click", async () => {
+        document.getElementById("placeInput").disabled = true;
         await processPlaceInput();
+        document.getElementById("placeInput").disabled = false;
+        document.getElementById("placeInput").focus();
     });
 
 
