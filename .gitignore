@@ -1,6 +1,5 @@
 *.db
 *.csv
-*.txt
 __pycache__
 .notes
 .archive
