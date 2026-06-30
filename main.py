@@ -9,6 +9,7 @@ import uuid
 import json
 import os
 import datetime
+import websockets
 
 if not os.path.exists("gamedata"):
     os.makedirs("gamedata")
@@ -258,16 +259,4 @@ def game(request: Request, type: str):
 @app.get("/test")
 def test():
     return {"message": "Test endpoint is working!"}
-# @app.get("/all")
-# def all():
-#     con = sqlite3.connect("data.db")
-#     cur = con.cursor()
-#     cur.execute(f"SELECT name, lat, lon, county FROM data")
 
-#     results = cur.fetchall()
-#     con.close()
-#     response = {"results": []}
-#     for result in results:
-#         res_json = {"name": result[0], "lat": result[1], "lon": result[2], "county": result[3]}
-#         response["results"].append(res_json)
-#     return response
