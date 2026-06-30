@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Cookie, Request
+from fastapi import FastAPI, Cookie, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,9 +10,28 @@ import json
 import os
 import datetime
 import websockets
+import random
 
 if not os.path.exists("gamedata"):
     os.makedirs("gamedata")
+if not os.path.exists("gamedata/vs"):
+    os.makedirs("gamedata/vs")
+
+if not os.path.exists("data.db"):
+    raise FileNotFoundError("data.db not found. Please ensure the database file exists.")
+
+if not os.path.exists("typemap.json"):
+    raise FileNotFoundError("typemap.json not found. Please ensure the typemap file exists.")
+
+if not os.path.exists("static"):
+    raise FileNotFoundError("static directory not found. Please ensure the static files exist.")
+
+if not os.path.exists("templates"):
+    raise FileNotFoundError("templates directory not found. Please ensure the template files exist.")
+
+# if not os.path.exists("rooms.json"):
+#     with open("rooms.json", "w") as f:
+#         json.dump({}, f)
 
 app = FastAPI(root_path="/placenamegame")
 
@@ -256,7 +275,105 @@ def game(request: Request, type: str):
         return JSONResponse(content={"error": "Invalid type"}, status_code=400)
     return templates.TemplateResponse("index.html", {"request": request, "type": type_name, "type2": type_name_2})
 
-@app.get("/test")
-def test():
-    return {"message": "Test endpoint is working!"}
 
+rooms = {}
+
+
+@app.get("/vs")
+def vs(request: Request):
+    return templates.TemplateResponse("vshome.html", {"request": request})
+
+@app.get("/vs/room/create")
+def create_room(type: str, uid_json: Annotated[str | None, Cookie()] = None):
+    cookie = json.loads(uid_json) if uid_json else {}
+
+    with open("typemap.json", "r") as f:
+        typemap = json.load(f)
+    if type not in typemap:
+        return JSONResponse(content={"error": "Invalid type"}, status_code=400)
+
+    uid = cookie.get(f"uid-vs-{type}") if cookie else None
+    if uid is None:
+        uid = str(uuid.uuid4())
+        cookie[f"uid-vs-{type}"] = uid
+        cookie_str = json.dumps(cookie)
+    else:
+        cookie_str = uid_json
+
+    room_id = str(random.randint(0, 999999)).zfill(6)
+
+    room_data = {"type": type, "players": {uid: {"name": "Anonymous", "websockets": [], "guesses": [], "count": 0}}, "status": "waiting", "time_limit": None, "created_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "started_at": None}
+    # with open(f"gamedata/room_{room_id}.json", "w") as f:
+    #     json.dump(room_data, f)
+    rooms[room_id] = room_data
+    # response = templates.TemplateResponse("vsroom.html", {"request": request, "room_id": room_id, "type": type})
+    response = JSONResponse(content={"room_id": room_id, "type": type})
+    response.set_cookie(key="uid_json", value=cookie_str, httponly=False)
+    return response
+
+@app.get("/vs/room/join")
+def join_room(room_id: str, name: str | None = None,  uid_json: Annotated[str | None, Cookie()] = None):
+    if uid_json is None:
+        return JSONResponse(content={"error": "No UID cookie"}, status_code=400)
+    cookie = json.loads(uid_json)
+    if room_id not in rooms:
+        return JSONResponse(content={"error": "Room not found"}, status_code=404)
+    room_data = rooms[room_id]
+    if room_data["status"] != "waiting":
+        return JSONResponse(content={"error": "Room is not accepting new players"}, status_code=403)
+    type = room_data["type"]
+    uid = cookie.get(f"uid-vs-{type}")
+    if uid is None:
+        uid = str(uuid.uuid4())
+        cookie[f"uid-vs-{type}"] = uid
+        cookie_str = json.dumps(cookie)
+    else:
+        cookie_str = uid_json
+    if uid not in room_data["players"]:
+        room_data["players"][uid] = {"name": name if name else "Anonymous", "websockets": [], "guesses": [], "count": 0}
+    rooms[room_id] = room_data
+    response = JSONResponse(content={"room_id": room_id, "type": type})
+    response.set_cookie(key="uid_json", value=cookie_str, httponly=False)
+    return response
+
+@app.get("/vs/room")
+def room(request: Request, room_id: str, type: str, uid_json: Annotated[str | None, Cookie()] = None):
+    if uid_json is None:
+        return JSONResponse(content={"error": "No UID cookie"}, status_code=400)
+    cookie = json.loads(uid_json)
+    uid = cookie.get(f"uid-vs-{type}")
+    if room_id not in rooms:
+        return JSONResponse(content={"error": "Room not found"}, status_code=404)
+    room_data = rooms[room_id]
+    if uid not in room_data["players"]:
+        return JSONResponse(content={"error": "You are not a player in this room"}, status_code=403)
+    return templates.TemplateResponse("vsroom.html", {"request": request, "room_id": room_id, "type": room_data["type"]})
+
+@app.websocket("/vs/room/{room_id}")
+async def handle_websocket(websocket: WebSocket, room_id: str, uid_json: Annotated[str | None, Cookie()] = None):
+    await websocket.accept()
+    if room_id not in rooms:
+        await websocket.send_json({"error": "Room not found"})
+        await websocket.close()
+        return
+    room_data = rooms[room_id]
+    type = room_data["type"]
+    if uid_json is None:
+        await websocket.send_json({"error": "No UID cookie"})
+        await websocket.close()
+        return
+    cookie = json.loads(uid_json)
+    uid = cookie.get(f"uid-vs-{type}")
+    if uid not in room_data["players"]:
+        await websocket.send_json({"error": "You are not a player in this room"})
+        await websocket.close()
+        return
+    else:
+        await websocket.send_json({"message": "Connected to room", "room_id": room_id, "type": type, "uid": uid})
+        room_data["players"][uid]["websockets"].append(websocket)  # Initialise the player's data in the room
+        rooms[room_id] = room_data  # Update the room data with the new ws connection
+    try:
+        while True:
+            pass
+    except WebSocketDisconnect:
+        print(f"WebSocket disconnected for room {room_id}")
