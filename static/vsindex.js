@@ -8,9 +8,11 @@ let numPlaces = 0;
 let totalPlaces;
 let type;
 let regionName;
+let uids = [];
+let host_uid;
 window.addEventListener("DOMContentLoaded", async () => {
     async function fetchGeoJSON(type) {
-        const res = await fetch("./typemap");
+        const res = await fetch("/placenamegame/typemap");
         const typemap = await res.json();
         console.log(typemap);
         if (!typemap[type]) {
@@ -21,7 +23,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         const filename = typemap[type].geofile;
         regionName = typemap[type].name;
         document.getElementById("h1").textContent = "How many places can you name in " + regionName + "?";
-        const response = await fetch(`./static/geo/${filename}`);
+        const response = await fetch(`/placenamegame/static/geo/${filename}`);
         const geoData = await response.json();
         return geoData;
     }
@@ -123,7 +125,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         }
         document.getElementById("message").textContent = "⠀";
         if (placeName.length >= 2) {
-            const response = await fetch(`./query?text=${encodeURIComponent(placeName)}&type=${type}`, { credentials: 'include' });
+            const response = await fetch(`/placenamegame/query?text=${encodeURIComponent(placeName)}&type=${type}`, { credentials: 'include' });
             if (!response.ok) {
                 console.error("Failed to query place");
                 return;
@@ -169,21 +171,60 @@ window.addEventListener("DOMContentLoaded", async () => {
         const paramsString = window.location.search;
         const searchParams = new URLSearchParams(paramsString)
         type = searchParams.get("type")|| "uk";
+        roomId = searchParams.get("room_id");
         await drawMap();
-        const response = await fetch(`./init?type=${type}`, { credentials: 'include' });
-        if (!response.ok) {
-            console.error("Failed to initialize session");
-            return;
+        // const response = await fetch(`/placenamegame/init?type=${type}`, { credentials: 'include' });
+        // if (!response.ok) {
+        //     console.error("Failed to initialize session");
+        //     return;
+        // }
+        // const data = await response.json();
+        // for (const place of data.guesses) {
+        //     addPlace(place);
+        //     enteredPlaces.push(place.name.toLowerCase().trim().replaceAll(" ",""));
+        // }
+        // if (data.name && data.name.trim() !== "Anonymous") {
+        //     document.getElementById("nameInput").value = data.name || "";
+        // }
+        var ws = new WebSocket(`ws://${window.location.host}/placenamegame/vs/room/${roomId}`);
+        ws.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            console.log(`"${data.code}" message received:`, data);
+            if (data.code == "INIT") {
+                const playerName = data.name;
+                const uid = data.uid;
+                uids.push(uid);
+                const playerList = document.getElementById("playerList");
+                playerList.innerHTML = "";
+                const li = document.createElement("li");
+                li.innerHTML = `<input type = "text" id="playerNameInput" value="${playerName}">`
+                playerList.appendChild(li);
+                li.addEventListener("input", async (event) => {
+                    const newName = event.target.value.trim();
+                    ws.send(JSON.stringify({code: "NAME_CHANGE", name: newName}));
+                });
+            }
+            if (data.code == "NAME_CHANGE") {
+                const li = document.getElementById(`player-${data.uid}`);
+                if (li) {
+                    li.textContent = data.name;
+                } else{
+                    console.warn(`Player with uid ${data.uid} not found in the list.`);
+                }
+            }
+            if (data.code == "JOIN") {
+                if (!uids.includes(data.uid)) {
+                    const playerList = document.getElementById("playerList");
+                    const li = document.createElement("li");
+                    li.id = `player-${data.uid}`;
+                    li.textContent = data.name;
+                    playerList.appendChild(li);
+                    uids.push(data.uid);
+                }
+            }
         }
-        const data = await response.json();
-        for (const place of data.guesses) {
-            addPlace(place);
-            enteredPlaces.push(place.name.toLowerCase().trim().replaceAll(" ",""));
-        }
-        if (data.name && data.name.trim() !== "Anonymous") {
-            document.getElementById("nameInput").value = data.name || "";
-        }
-        const total = await fetch(`./howmany?type=${type}`);
+        // ws.send(JSON.stringify({type: "JOIN", name: document.getElementById("nameInput").value.trim() || "Anonymous"}));
+        const total = await fetch(`/placenamegame/howmany?type=${type}`);
         const totalData = await total.json();
         totalPlaces = totalData.total;
         document.getElementById("placesHeader").textContent = `Places Entered: ${numPlaces} / ${totalPlaces}`;
@@ -200,7 +241,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("nameInput").addEventListener("blur", async (event) => {
         const name = event.target.value.trim();
         if (name) {
-            const response = await fetch(`./setname?type=${type}&name=${encodeURIComponent(name)}`, { credentials: 'include' });
+            const response = await fetch(`/placenamegame/setname?type=${type}&name=${encodeURIComponent(name)}`, { credentials: 'include' });
             if (!response.ok) {
                 console.error("Failed to set name");
                 return;
@@ -212,7 +253,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById("finishButton").addEventListener("click", async () => {
         const name = document.getElementById("nameInput").value.trim() || "Anonymous";
-        const response = await fetch(`./finish?type=${type}&name=${encodeURIComponent(name)}`, { credentials: 'include' });
+        const response = await fetch(`/placenamegame/finish?type=${type}&name=${encodeURIComponent(name)}`, { credentials: 'include' });
         if (!response.ok) {
             console.error("Failed to finish game");
             window.location.reload();
@@ -220,18 +261,18 @@ window.addEventListener("DOMContentLoaded", async () => {
         }
         const data = await response.json();
         console.log(data);
-        window.location.href = `./results?uid=${data.uid}`;
+        window.location.href = `/placenamegame/results?uid=${data.uid}`;
     });
     
     document.getElementById("resetButton").addEventListener("click", async () => {
-        const response = await fetch(`./reset?type=${type}`, { credentials: 'include' });
+        const response = await fetch(`/placenamegame/reset?type=${type}`, { credentials: 'include' });
         if (!response.ok) {
             console.error("Failed to reset game");
             return;
         }
         const data = await response.json();
         console.log(data);
-        window.location.href = `./game?type=${type}`;
+        window.location.href = `/placenamegame/game?type=${type}`;
     });
 
 });

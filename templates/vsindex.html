@@ -11,7 +11,7 @@
     <meta property="og:image" content="{{url_for('static', path='image.png')}}" />
     <meta property="og:description" content="How many place names do you know in {{type}}? &#x0A; Play now to find out!" />
     <meta property="og:site_name" content="The Place Name Game" />
-    <link rel="icon" type="image/png" href="./static/piggy.png">
+    <link rel="icon" type="image/png" href="/placenamegame/static/piggy.png">
 </head>
 <body>
     <div class = "loading" id = "loading">
@@ -21,7 +21,7 @@
     <div id = "main" style = "display: none;">
         <div class = "top">
             <h1 id = "h1">Loading...</h1>
-            <p id = "instructions"><a href = "{{url_for('home')}}">Back to Home</a></p>
+            <p id = "instructions"><a href = "{{url_for('vs')}}">Back to Home</a></p>
             <hr>
         </div>
         <div class = "container">
@@ -31,47 +31,60 @@
                     <svg id="map" width="600" height="750"></svg><br>
                 </div>
                 <div class = "col-lg-4 c" id="r">
-                    <!-- <h3>Enter Place Names</h3> -->
-                    <br>
-                    <div class="input-group mb-3" id = "placeInputGroup">
-                        <input type="text" class = "form-control" id="placeInput" placeholder="Enter a place name" autocomplete="off" autofocus enterkeyhint="send">
-                        <div class="input-group-append">
-                            <button class="btn btn-secondary" type="button" id="placeSubmitButton">Submit</button>
+                    <div id = "waiting">
+                        <div id = "roomInfo">
+                            <h3>Waiting for players...</h3>
+                            <p>Room Code: <span id = "roomCode">{{room_id}}</span></p>
+                            <p> Region: {{type2}}</p>
+                            <input type="range" class="form-range" min="1" max="60" value="5" id="timeLimitSlider">
+                            <label for="timeLimitSlider">Time Limit: <span id="timeLimitValue">5</span> minutes</label>
+                            <p>Players in Room:</p>
+                            <ul id = "playerList"></ul>
                         </div>
+                            
                     </div>
+                    <div id = "gameplay" style = "display: none;">
+                        <!-- <h3>Enter Place Names</h3> -->
+                        <br>
+                        <div class="input-group mb-3" id = "placeInputGroup">
+                            <input type="text" class = "form-control" id="placeInput" placeholder="Enter a place name" autocomplete="off" autofocus enterkeyhint="send">
+                            <div class="input-group-append">
+                                <button class="btn btn-secondary" type="button" id="placeSubmitButton">Submit</button>
+                            </div>
+                        </div>
 
-                    <br>
-                    <p id="message">⠀</p>
-                    <br>
-                    <h3 id = "placesHeader">Places Entered</h3>
-                    <table class = "table table-striped" id = "placesTableHeader">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Place</th>
-                            </tr>
-                        </thead>
-                    </table>
-                    <div id = "tableContainer">
-                        <table class = "table table-striped" id = "placesTable">
+                        <br>
+                        <p id="message">⠀</p>
+                        <br>
+                        <h3 id = "placesHeader">Places Entered</h3>
+                        <table class = "table table-striped" id = "placesTableHeader">
                             <thead>
                                 <tr>
-                                    
+                                    <th scope="col">#</th>
+                                    <th scope="col">Place</th>
                                 </tr>
                             </thead>
                         </table>
-                    </div>
-                    <br>
-                    <div class = "btncontainer">
-                        <div class = "inputcontainer" style="display:inline-block; padding-bottom:5px;">
-                            <input type="text" class = "form-control" id="nameInput" placeholder="Enter your name...">
+                        <div id = "tableContainer">
+                            <table class = "table table-striped" id = "placesTable">
+                                <thead>
+                                    <tr>
+                                        
+                                    </tr>
+                                </thead>
+                            </table>
                         </div>
-                        <div class = "buttonscontainer" style="display:inline-block; transform: translateY(-2px);">
-                            <button type="button" class="btn btn-success" id="finishButton">Finish</button>
-                            <button type="button" class="btn btn-danger" id="resetButton">Reset</button>
+                        <br>
+                        <div class = "btncontainer">
+                            <div class = "inputcontainer" style="display:inline-block; padding-bottom:5px;">
+                                <input type="text" class = "form-control" id="nameInput" placeholder="Enter your name...">
+                            </div>
+                            <div class = "buttonscontainer" style="display:inline-block; transform: translateY(-2px);">
+                                <button type="button" class="btn btn-success" id="finishButton">Finish</button>
+                                <button type="button" class="btn btn-danger" id="resetButton">Reset</button>
+                            </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -79,6 +92,6 @@
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-    <script src="{{url_for('static', path='index.js')}}"></script>
+    <script src="{{url_for('static', path='vsindex.js')}}"></script>
 </body>
 </html>

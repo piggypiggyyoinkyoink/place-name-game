@@ -11,7 +11,7 @@
         <meta property="og:image" content="{{url_for('static', path='image.png')}}" />
         <meta property="og:description" content="How many place names do you know? &#x0A; Select a region to play!" />
         <meta property="og:site_name" content="The Place Name Game" />
-        <link rel="icon" type="image/png" href="./static/piggy.png">
+        <link rel="icon" type="image/png" href="/placenamegame/static/piggy.png">
     </head>
     <body>
         <div class = "top">
@@ -24,17 +24,29 @@
             <h2 id = "loadingText">Loading</h2>
         </div>
         <div class = "container" id = "main" style = "display: none;">
-            <h3>Main Regions</h3>
-            <hr>
-            <div class = "row justify-content-center g-3" id = "country-card-container"></div><br><br>
-            <h3>Counties of England</h3><hr>
-            <div class = "row justify-content-center g-3" id = "england-card-container"></div><br><br>
-            <h3>Council Areas of Scotland</h3><hr>
-            <div class = "row justify-content-center g-3" id = "scotland-card-container"></div><br><br>
-            <h3>Principal Areas of Wales</h3><hr>
-            <div class = "row justify-content-center g-3" id = "wales-card-container"></div><br><br>
-            <h3>Counties of Northern Ireland</h3><hr>
-            <div class = "row justify-content-center g-3" id = "ni-card-container"></div>
+            <div>
+                <h2> Got a room code? Enter it below to join a room</h2>
+                <form id = "join-room-form" class = "row justify-content-center g-3" onsubmit = "alert('Joining room...');">
+                    <input type = "text" class = "form-control" id = "name-input" placeholder = "Enter your name (optional)">
+                    <input type = "text" class = "form-control" id = "room-code-input" placeholder = "Room Code" required>
+                    <button type = "submit" class = "btn btn-primary" id = "join-room-submit" disabled>Join</button>
+                </form>
+                <p id = "message">⠀</p>
+            </div>
+            <div class = "">
+                <h2> Create a room by selecting a region below</h2>
+                <h3>Main Regions</h3>
+                <hr>
+                <div class = "row justify-content-center g-3" id = "country-card-container"></div><br><br>
+                <h3>Counties of England</h3><hr>
+                <div class = "row justify-content-center g-3" id = "england-card-container"></div><br><br>
+                <h3>Council Areas of Scotland</h3><hr>
+                <div class = "row justify-content-center g-3" id = "scotland-card-container"></div><br><br>
+                <h3>Principal Areas of Wales</h3><hr>
+                <div class = "row justify-content-center g-3" id = "wales-card-container"></div><br><br>
+                <h3>Counties of Northern Ireland</h3><hr>
+                <div class = "row justify-content-center g-3" id = "ni-card-container"></div>
+                </div>
         </div><br><br>
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>

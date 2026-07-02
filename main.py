@@ -302,7 +302,7 @@ def create_room(type: str, uid_json: Annotated[str | None, Cookie()] = None):
 
     room_id = str(random.randint(0, 999999)).zfill(6)
 
-    room_data = {"type": type, "players": {uid: {"name": "Anonymous", "websockets": [], "guesses": [], "count": 0}}, "status": "waiting", "time_limit": None, "created_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "started_at": None}
+    room_data = {"type": type, "host_uid": uid, "players": {uid: {"name": "Anonymous", "websockets": [], "guesses": [], "count": 0}}, "status": "waiting", "time_limit": None, "created_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "started_at": None}
     # with open(f"gamedata/room_{room_id}.json", "w") as f:
     #     json.dump(room_data, f)
     rooms[room_id] = room_data
@@ -313,9 +313,8 @@ def create_room(type: str, uid_json: Annotated[str | None, Cookie()] = None):
 
 @app.get("/vs/room/join")
 def join_room(room_id: str, name: str | None = None,  uid_json: Annotated[str | None, Cookie()] = None):
-    if uid_json is None:
-        return JSONResponse(content={"error": "No UID cookie"}, status_code=400)
-    cookie = json.loads(uid_json)
+    cookie = json.loads(uid_json) if uid_json else {}
+
     if room_id not in rooms:
         return JSONResponse(content={"error": "Room not found"}, status_code=404)
     room_data = rooms[room_id]
@@ -347,7 +346,7 @@ def room(request: Request, room_id: str, type: str, uid_json: Annotated[str | No
     room_data = rooms[room_id]
     if uid not in room_data["players"]:
         return JSONResponse(content={"error": "You are not a player in this room"}, status_code=403)
-    return templates.TemplateResponse("vsroom.html", {"request": request, "room_id": room_id, "type": room_data["type"]})
+    return templates.TemplateResponse("vsindex.html", {"request": request, "room_id": room_id, "type": room_data["type"]})
 
 @app.websocket("/vs/room/{room_id}")
 async def handle_websocket(websocket: WebSocket, room_id: str, uid_json: Annotated[str | None, Cookie()] = None):
@@ -356,12 +355,12 @@ async def handle_websocket(websocket: WebSocket, room_id: str, uid_json: Annotat
         await websocket.send_json({"error": "Room not found"})
         await websocket.close()
         return
-    room_data = rooms[room_id]
-    type = room_data["type"]
     if uid_json is None:
         await websocket.send_json({"error": "No UID cookie"})
         await websocket.close()
         return
+    room_data = rooms[room_id]
+    type = room_data["type"]
     cookie = json.loads(uid_json)
     uid = cookie.get(f"uid-vs-{type}")
     if uid not in room_data["players"]:
@@ -369,11 +368,37 @@ async def handle_websocket(websocket: WebSocket, room_id: str, uid_json: Annotat
         await websocket.close()
         return
     else:
-        await websocket.send_json({"message": "Connected to room", "room_id": room_id, "type": type, "uid": uid})
+        # await websocket.send_json({"message": "Connected to room", "room_id": room_id, "type": type, "uid": uid})
         room_data["players"][uid]["websockets"].append(websocket)  # Initialise the player's data in the room
+        await websocket.send_json({"code":"INIT", "room_id": room_id, "type": room_data["type"], "host_uid": room_data["host_uid"], "status": room_data["status"], "time_limit": room_data["time_limit"], "started_at": room_data["started_at"], "name": room_data["players"][uid]["name"], "uid": uid})
+        for userid in room_data["players"]:
+            # Send a JOIN message to all players in the room about the new player
+            for ws in room_data["players"][userid]["websockets"]:
+                # if ws != websocket:  # Don't send the JOIN message to the new player
+                await ws.send_json({"code":"JOIN", "uid": uid, "name": room_data["players"][uid]["name"]})
+            # Send a JOIN message to the new player about all existing players in the room
+            await websocket.send_json({"code":"JOIN", "uid": userid, "name": room_data["players"][userid]["name"]})
+        # Send the current state of the room to the new player
         rooms[room_id] = room_data  # Update the room data with the new ws connection
     try:
         while True:
-            pass
+            data = await websocket.receive_json()
+            if data.get("code") == "NAME_CHANGE":
+                new_name = data.get("name", "Anonymous")
+                room_data["players"][uid]["name"] = new_name
+                rooms[room_id] = room_data  # Update the room data with the new name
+                # Broadcast the name change to all players in the room
+                for userid in room_data["players"]:
+                    if uid != userid:  # Don't send the name change to the player who changed their name
+                        for ws in room_data["players"][userid]["websockets"]:
+                            await ws.send_json({"code":"NAME_CHANGE", "uid": uid, "name": new_name})
+                
     except WebSocketDisconnect:
         print(f"WebSocket disconnected for room {room_id}")
+        room_data = rooms[room_id]
+
+        if uid in room_data["players"]:
+            if websocket in room_data["players"][uid]["websockets"]:
+                room_data["players"][uid]["websockets"].remove(websocket)
+                rooms[room_id] = room_data  # Update the room data after removing the websocket
+        return

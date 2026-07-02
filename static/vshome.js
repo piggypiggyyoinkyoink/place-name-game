@@ -9,7 +9,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         // console.log(typemap);
         if (!typemap[type]) {
             throw new Error(`Invalid type: ${type}`);
-            window.location.href = "./"; 
+            window.location.href = "/placenamegame/vs"; 
             return;
         }
         const filename = typemap[type].geofile;
@@ -81,13 +81,19 @@ window.addEventListener("DOMContentLoaded", async () => {
         // let height = window.getComputedStyle(containerElem).height;
         // width = parseInt(width);
         // await drawMap(width, type);
-        document.getElementById(`card-${type}`).addEventListener("click", () => {
-            window.location.href = `./vs/room/create?type=${type}`;
+        document.getElementById(`card-${type}`).addEventListener("click", async () => {
+            const res = await fetch(`/placenamegame/vs/room/create?type=${type}`);
+            const data = await res.json();
+            if (res.ok){
+                window.location.href = `/placenamegame/vs/room?room_id=${data.room_id}&type=${data.type}`;
+            } else {
+                alert(data.error);
+            }
         });
     }
 
     async function init_home(){
-        const res = await fetch("./typemap?howmany=true");
+        const res = await fetch(`/placenamegame/typemap?howmany=true`);
         typemap = await res.json();
         const countryTypes = ["uk", "england", "scotland", "wales", "ni"];
         const englandCountyTypes = ['greaterlondon', 'suffolk', 'essex', 'wiltshire', 'eastsussex', 'staffordshire', 'cambridgeshire', 'somerset', 'cheshire', 'lincolnshire', 'surrey', 'hampshire', 'westsussex', 'hertfordshire', 'westyorkshire', 'westmidlands', 'norfolk', 'cumbria', 'isleofwight', 'cornwall', 'devon', 'oxfordshire', 'berkshire', 'buckinghamshire', 'gloucestershire', 'bedfordshire', 'dorset', 'leicestershire', 'warwickshire', 'northamptonshire', 'worcestershire', 'northumberland', 'kent', 'northyorkshire', 'eastridingofyorkshire', 'tyneandwear', 'herefordshire', 'southyorkshire', 'rutland', 'derbyshire', 'durham', 'shropshire', 'merseyside', 'lancashire', 'nottinghamshire', 'greatermanchester'].sort();
@@ -137,8 +143,37 @@ window.addEventListener("DOMContentLoaded", async () => {
                 });
             }, 250);
         });
+
+        document.getElementById("join-room-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const name = document.getElementById("name-input").value.trim() || "Anonymous";
+            const roomCode = document.getElementById("room-code-input").value.trim();
+            if (!roomCode || roomCode.length !== 6) {
+                document.getElementById("message").textContent = "Please enter a valid room code.";
+                return;
+            }
+            const res = await fetch(`/placenamegame/vs/room/join?room_id=${roomCode}&name=${name}`);
+            const data = await res.json();
+            if (data.error) {
+                document.getElementById("message").textContent = data.error;
+            } else {
+                window.location.href = `/placenamegame/vs/room?room_id=${roomCode}&type=${data.type}`;
+            }
+        });
+
+        document.getElementById("room-code-input").addEventListener("input", () => {
+            document.getElementById("message").textContent = "⠀";
+            const roomCode = document.getElementById("room-code-input").value.trim();
+            if (roomCode.length === 6) {
+                document.getElementById("join-room-submit").disabled = false;
+            } else {
+                document.getElementById("join-room-submit").disabled = true;
+            }
+        });
     }
+
     init_home();
 
 });
+
 
