@@ -33,13 +33,14 @@
                 <div class = "col-lg-4 c" id="r">
                     <div id = "waiting">
                         <div id = "roomInfo">
+                            <h1><b><span id = "roomCode">{{room_id}}</span></b></h1>
                             <h3>Waiting for players...</h3>
-                            <p>Room Code: <span id = "roomCode">{{room_id}}</span></p>
-                            <p> Region: {{type2}}</p>
-                            <input type="range" class="form-range" min="1" max="60" value="5" id="timeLimitSlider" disabled>
-                            <label for="timeLimitSlider">Time Limit: <span id="timeLimitValue">5</span> minutes</label>
+                            <p> Region: {{type}}</p>
+                            <p>Duration: <span id="timeLimitValue">?</span> minute<span id="timeLimitPlural">s</span></p>
+                            <input type="range" class="form-range" min="1" max="60" value="5" id="timeLimitSlider" disabled style="display: none;">
                             <p>Players in Room:</p>
                             <ul id = "playerList"></ul>
+                            <button type="button" class="btn btn-success" id="startGameButton" disabled style = "display: none;">Start Game</button>
                         </div>
                             
                     </div>

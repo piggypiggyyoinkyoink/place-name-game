@@ -206,7 +206,45 @@ window.addEventListener("DOMContentLoaded", async () => {
                 document.getElementById("leaveRoomLink").addEventListener("click", () => {
                     ws.close();
                 });
+                
+                document.getElementById("timeLimitValue").textContent = data.time_limit;
+                    if (data.time_limit == 1) {
+                        document.getElementById("timeLimitPlural").textContent = "";
+                    } else {
+                        document.getElementById("timeLimitPlural").textContent = "s";
+                    }
+
                 host_uid = data.host_uid;
+                if (uid === host_uid) {
+                    document.getElementById("timeLimitSlider").disabled = false;
+                    document.getElementById("timeLimitSlider").style.display = "block";
+                    document.getElementById("timeLimitSlider").addEventListener("input", (event) => {
+                        const timeLimit = event.target.value;
+                        document.getElementById("timeLimitValue").textContent = timeLimit;
+                        if (timeLimit == 1) {
+                            document.getElementById("timeLimitPlural").textContent = "";
+                        } else {
+                            document.getElementById("timeLimitPlural").textContent = "s";
+                        }
+                    });
+                    document.getElementById("timeLimitSlider").addEventListener("change", async (event) => {
+                        const timeLimit = event.target.value;
+                        document.getElementById("timeLimitValue").textContent = timeLimit;
+                        if (timeLimit == 1) {
+                            document.getElementById("timeLimitPlural").textContent = "";
+                        } else {
+                            document.getElementById("timeLimitPlural").textContent = "s";
+                        }
+                        // only send the message once the user has finished adjusting the slider (on change event)
+                        ws.send(JSON.stringify({code: "SET_TIME_LIMIT", time_limit: timeLimit}));
+                    });
+
+                    document.getElementById("startGameButton").disabled = false;
+                    document.getElementById("startGameButton").style.display = "block";
+                    document.getElementById("startGameButton").addEventListener("click", () => {
+                        ws.send(JSON.stringify({code: "START_GAME"}));
+                    });
+                }
             }
             if (data.code == "NAME_CHANGE") {
                 const li = document.getElementById(`player-${data.uid}`);
@@ -214,6 +252,15 @@ window.addEventListener("DOMContentLoaded", async () => {
                     li.textContent = data.name;
                 } else{
                     console.warn(`Player with uid ${data.uid} not found in the list.`);
+                }
+            }
+            if (data.code == "SET_TIME_LIMIT") {
+                document.getElementById("timeLimitSlider").value = data.time_limit;
+                document.getElementById("timeLimitValue").textContent = data.time_limit;
+                if (data.time_limit == 1) {
+                    document.getElementById("timeLimitPlural").textContent = "";
+                } else {
+                    document.getElementById("timeLimitPlural").textContent = "s";
                 }
             }
             if (data.code == "JOIN") {

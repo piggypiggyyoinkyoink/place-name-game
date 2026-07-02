@@ -26,9 +26,9 @@
         <div class = "container" id = "main" style = "display: none;">
             <div>
                 <h2> Got a room code? Enter it below to join a room</h2>
-                <form id = "join-room-form" class = "row justify-content-center g-3" onsubmit = "alert('Joining room...');">
-                    <input type = "text" class = "form-control" id = "name-input" placeholder = "Enter your name (optional)">
-                    <input type = "text" class = "form-control" id = "room-code-input" placeholder = "Room Code" required>
+                <form id = "join-room-form" class = "row justify-content-center g-3" autocomplete = "off">
+                    <!-- <input type = "text" class = "form-control" id = "name-input" placeholder = "Enter your name (optional)" autocomplete = "off"> -->
+                    <input type = "text" class = "form-control" id = "room-code-input" placeholder = "Room Code" required autocomplete = "off">
                     <button type = "submit" class = "btn btn-primary" id = "join-room-submit" disabled>Join</button>
                 </form>
                 <p id = "message">⠀</p>

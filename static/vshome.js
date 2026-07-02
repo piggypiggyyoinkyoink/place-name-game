@@ -146,7 +146,8 @@ window.addEventListener("DOMContentLoaded", async () => {
 
         document.getElementById("join-room-form").addEventListener("submit", async (event) => {
             event.preventDefault();
-            const name = document.getElementById("name-input").value.trim() || "Anonymous";
+            // const name = document.getElementById("name-input").value.trim() || "Anonymous";
+            const name = "Anonymous";
             const roomCode = document.getElementById("room-code-input").value.trim();
             if (!roomCode || roomCode.length !== 6) {
                 document.getElementById("message").textContent = "Please enter a valid room code.";

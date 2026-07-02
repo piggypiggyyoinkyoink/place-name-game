@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Cookie, Request, WebSocket, WebSocketDisconnect
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
@@ -238,11 +238,14 @@ def get_typemap(howmany: str | None = None):
 
 @app.get("/results")
 def get_results(request: Request, uid: str):
-    # try:
-    with open(f"gamedata/{uid}.json", "r") as f:
-        content = json.load(f)
+    try:
+        with open(f"gamedata/{uid}.json", "r") as f:
+            content = json.load(f)
+    except FileNotFoundError:
+        return RedirectResponse(url="./")
     if content.get("finished") == False:
-        return JSONResponse(content={"error": "Invalid uid"}, status_code=400)
+        return RedirectResponse(url="./")
+
     name = content.get("name", "Anonymous")
     count = content.get("count", 0)
     if count != 1:
@@ -277,7 +280,7 @@ def game(request: Request, type: str):
 
 
 rooms = {}
-
+COLOURS = ["rgba(240,163,255,0.5)", "rgba(0,117,220,0.5)", "rgba(153,63,0,0.5)", "rgba(76,0,92,0.5)", "rgba(25,25,25,0.5)", "rgba(0,92,49,0.5)", "rgba(43,206,72,0.5)", "rgba(255,204,153,0.5)", "rgba(128,128,128,0.5)", "rgba(148,255,181,0.5)", "rgba(143,124,0,0.5)", "rgba(157,204,0,0.5)", "rgba(194,0,136,0.5)", "rgba(0,51,128,0.5)", "rgba(255,164,5,0.5)", "rgba(255,168,187,0.5)", "rgba(66,102,0,0.5)", "rgba(255,0,16,0.5)", "rgba(94,241,242,0.5)", "rgba(0,153,143,0.5)", "rgba(224,255,102,0.5)", "rgba(116,10,255,0.5)", "rgba(153,0,0,0.5)", "rgba(255,255,128,0.5)", "rgba(255,255,0,0.5)", "rgba(255,80,5,0.5)"]
 
 @app.get("/vs")
 def vs(request: Request):
@@ -302,7 +305,7 @@ def create_room(type: str, uid_json: Annotated[str | None, Cookie()] = None):
 
     room_id = str(random.randint(0, 999999)).zfill(6)
 
-    room_data = {"type": type, "host_uid": uid, "players": {uid: {"name": "Anonymous", "websockets": [], "guesses": [], "count": 0}}, "status": "waiting", "time_limit": None, "created_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "started_at": None}
+    room_data = {"type": type, "host_uid": uid, "players": {uid: {"name": "Anonymous", "websockets": [], "guesses": [], "count": 0}}, "status": "waiting", "time_limit": 5, "created_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "started_at": None}
     # with open(f"gamedata/room_{room_id}.json", "w") as f:
     #     json.dump(room_data, f)
     rooms[room_id] = room_data
@@ -346,7 +349,12 @@ def room(request: Request, room_id: str, type: str, uid_json: Annotated[str | No
     room_data = rooms[room_id]
     if uid not in room_data["players"]:
         return JSONResponse(content={"error": "You are not a player in this room"}, status_code=403)
-    return templates.TemplateResponse("vsindex.html", {"request": request, "room_id": room_id, "type": room_data["type"]})
+    typemap = get_typemap()
+    typedata = typemap.get(type, {})
+    type_name = typedata.get("name", "Unknown")
+    if type_name[:3] == "the":
+        type_name = type_name[4:]
+    return templates.TemplateResponse("vsindex.html", {"request": request, "room_id": room_id, "type": type_name})
 
 @app.websocket("/vs/room/{room_id}")
 async def handle_websocket(websocket: WebSocket, room_id: str, uid_json: Annotated[str | None, Cookie()] = None):
@@ -392,6 +400,24 @@ async def handle_websocket(websocket: WebSocket, room_id: str, uid_json: Annotat
                     if uid != userid:  # Don't send the name change to the player who changed their name
                         for ws in room_data["players"][userid]["websockets"]:
                             await ws.send_json({"code":"NAME_CHANGE", "uid": uid, "name": new_name})
+            elif data.get("code") == "SET_TIME_LIMIT":
+                if uid == room_data["host_uid"]:
+                    new_time_limit = data.get("time_limit", 5)
+                    room_data["time_limit"] = new_time_limit
+                    rooms[room_id] = room_data  # Update the room data with the new time limit
+                    # Broadcast the time limit change to all players in the room
+                    for userid in room_data["players"]:
+                        for ws in room_data["players"][userid]["websockets"]:
+                            await ws.send_json({"code":"SET_TIME_LIMIT", "time_limit": new_time_limit})
+            elif data.get("code") == "START_GAME":
+                if uid == room_data["host_uid"]:
+                    room_data["status"] = "in_progress"
+                    room_data["started_at"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    rooms[room_id] = room_data  # Update the room data with the new status
+                    # Broadcast the game start to all players in the room
+                    for userid in room_data["players"]:
+                        for ws in room_data["players"][userid]["websockets"]:
+                            await ws.send_json({"code":"START_GAME", "started_at": room_data["started_at"]})
                 
     except WebSocketDisconnect:
         print(f"WebSocket disconnected for room {room_id}")
@@ -403,7 +429,7 @@ async def handle_websocket(websocket: WebSocket, room_id: str, uid_json: Annotat
                 rooms[room_id] = room_data  # Update the room data after removing the websocket
             if room_data["status"] == "waiting" and not room_data["players"][uid]["websockets"]:
                 # If the player has no more active websockets, remove them from the room
-                del room_data["players"][uid]
+                # del room_data["players"][uid]
                 rooms[room_id] = room_data  # Update the room data after removing the player
                 # Broadcast to all remaining players that this player has left
                 for userid in room_data["players"]:
