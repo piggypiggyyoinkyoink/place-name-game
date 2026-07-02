@@ -401,4 +401,12 @@ async def handle_websocket(websocket: WebSocket, room_id: str, uid_json: Annotat
             if websocket in room_data["players"][uid]["websockets"]:
                 room_data["players"][uid]["websockets"].remove(websocket)
                 rooms[room_id] = room_data  # Update the room data after removing the websocket
+            if room_data["status"] == "waiting" and not room_data["players"][uid]["websockets"]:
+                # If the player has no more active websockets, remove them from the room
+                del room_data["players"][uid]
+                rooms[room_id] = room_data  # Update the room data after removing the player
+                # Broadcast to all remaining players that this player has left
+                for userid in room_data["players"]:
+                    for ws in room_data["players"][userid]["websockets"]:
+                        await ws.send_json({"code":"LEAVE", "uid": uid})
         return

@@ -21,7 +21,7 @@
     <div id = "main" style = "display: none;">
         <div class = "top">
             <h1 id = "h1">Loading...</h1>
-            <p id = "instructions"><a href = "{{url_for('vs')}}">Back to Home</a></p>
+            <p id = "instructions"><a id = "leaveRoomLink" href = "{{url_for('vs')}}">Leave Room</a></p>
             <hr>
         </div>
         <div class = "container">
@@ -36,7 +36,7 @@
                             <h3>Waiting for players...</h3>
                             <p>Room Code: <span id = "roomCode">{{room_id}}</span></p>
                             <p> Region: {{type2}}</p>
-                            <input type="range" class="form-range" min="1" max="60" value="5" id="timeLimitSlider">
+                            <input type="range" class="form-range" min="1" max="60" value="5" id="timeLimitSlider" disabled>
                             <label for="timeLimitSlider">Time Limit: <span id="timeLimitValue">5</span> minutes</label>
                             <p>Players in Room:</p>
                             <ul id = "playerList"></ul>

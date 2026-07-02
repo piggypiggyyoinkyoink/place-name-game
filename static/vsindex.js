@@ -203,6 +203,10 @@ window.addEventListener("DOMContentLoaded", async () => {
                     const newName = event.target.value.trim();
                     ws.send(JSON.stringify({code: "NAME_CHANGE", name: newName}));
                 });
+                document.getElementById("leaveRoomLink").addEventListener("click", () => {
+                    ws.close();
+                });
+                host_uid = data.host_uid;
             }
             if (data.code == "NAME_CHANGE") {
                 const li = document.getElementById(`player-${data.uid}`);
@@ -220,6 +224,13 @@ window.addEventListener("DOMContentLoaded", async () => {
                     li.textContent = data.name;
                     playerList.appendChild(li);
                     uids.push(data.uid);
+                }
+            }
+            if (data.code == "LEAVE") {
+                const li = document.getElementById(`player-${data.uid}`);
+                if (li) {
+                    li.remove();
+                    uids = uids.filter(uid => uid !== data.uid);
                 }
             }
         }
